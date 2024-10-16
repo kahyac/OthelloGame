@@ -56,6 +56,6 @@ public class SquareView extends StackPane {
 
 
     public void removeShapes() {
-
+        shapes.getChildren().clear();
     }
 }
