@@ -48,5 +48,9 @@ public class BoardGridView extends GridPane {
     public void addShapeAtSquare(int row, int column, Shape shape, Color color) {
         squareViews[row][column].addShape(shape, color);
     }
+
+    public void removeShapesAtSquare(int row, int column) {
+        squareViews[row][column].removeShapes();
+    }
 }
 

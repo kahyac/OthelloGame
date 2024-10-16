@@ -1,0 +1,49 @@
+image: gradle:alpine
+
+stages:
+  - build
+  - test
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+build:
+  stage: build
+  script:
+    gradle --build-cache build
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 1 week
+
+test:
+  stage: test
+  script:
+    - gradle test jacocoTestReport
+  artifacts:
+    when: always
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
+
+coverage-xml:
+  stage: test
+  script:
+    - gradle jacocoTestReportToCobertura
+  artifacts:
+    when: always
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: build/reports/jacoco/test/cobertura-jacocoTestReport.xml
+
+coverage-log:
+  stage: test
+  script:
+    - gradle jacocoLogTestCoverage
+  coverage: '/    - Instruction Coverage: ([0-9.]+)%/'
+  rules:
+    - when: always
+

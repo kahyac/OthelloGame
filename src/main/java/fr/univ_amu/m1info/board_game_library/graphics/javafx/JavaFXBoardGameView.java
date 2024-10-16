@@ -49,7 +49,7 @@ public class JavaFXBoardGameView implements BoardGameView {
 
     @Override
     public void removeShapesAtSquare(int row, int column) {
-
+        boardGridView.removeShapesAtSquare(row, column);
     }
 
     public Scene getScene() {
