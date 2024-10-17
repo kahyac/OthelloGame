@@ -9,7 +9,6 @@ import javafx.scene.layout.GridPane;
 
 public class BoardGridView extends GridPane {
     private final static int BASE_SQUARE_SIZE = 65;
-    private int squareSize = BASE_SQUARE_SIZE;
     private SquareView[][] squareViews;
     private int rowCount;
     private int columnCount;
@@ -28,7 +27,7 @@ public class BoardGridView extends GridPane {
         }
     }
     private void addSquareView(int row, int column) {
-        squareViews[row][column] = new SquareView(column, row, squareSize);
+        squareViews[row][column] = new SquareView(column, row, BASE_SQUARE_SIZE);
         this.add(squareViews[row][column], column, row);
     }
 

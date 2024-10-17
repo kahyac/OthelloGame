@@ -4,6 +4,7 @@ import fr.univ_amu.m1info.board_game_library.graphics.ButtonActionOnClick;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.layout.HBox;
 
 
@@ -11,8 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Bar extends HBox {
-    private Map<String, Label> labels = new HashMap<>();
-    private Map<String, Button> buttons = new HashMap<>();
+    private final Map<String, Labeled> labeledElements = new HashMap<>();
+    private final Map<String, Button> buttons = new HashMap<>();
 
     public Bar() {
         super();
@@ -22,12 +23,12 @@ public class Bar extends HBox {
     }
 
     public void addLabel(String id, String initialText){
-        if(labels.containsKey(id)){
+        if(labeledElements.containsKey(id)){
             throw new IllegalArgumentException("Label " + id + " already exists");
         }
         Label label = new Label(initialText);
         label.setAlignment(Pos.BASELINE_CENTER);
-        labels.put(id, label);
+        labeledElements.put(id, label);
         this.getChildren().add(label);
     }
 
@@ -37,13 +38,14 @@ public class Bar extends HBox {
 
     public void addButton(String id, String label){
         Button button = new Button(label);
+        labeledElements.put(id, button);
         buttons.put(id, button);
         this.getChildren().add(button);
     }
 
     public void updateLabel(String id, String newText){
-        if(labels.containsKey(id)){
-            labels.get(id).setText(newText);
+        if(labeledElements.containsKey(id)){
+            labeledElements.get(id).setText(newText);
         }
     }
 }

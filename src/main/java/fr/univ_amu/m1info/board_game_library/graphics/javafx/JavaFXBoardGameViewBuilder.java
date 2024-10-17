@@ -18,7 +18,7 @@ public class JavaFXBoardGameViewBuilder implements BoardGameViewBuilder {
 
 
     @Override
-    public BoardGameViewBuilder setBoardGameSize(int rowCount, int columnCount) {
+    public BoardGameViewBuilder setBoardGameDimensions(int rowCount, int columnCount) {
         boardGameView.getBoardGridView().setDimensions(rowCount, columnCount);
         return this;
     }

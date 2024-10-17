@@ -40,3 +40,4 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/src/main/java/fr/univ_amu/m1info/board_game_library/model/

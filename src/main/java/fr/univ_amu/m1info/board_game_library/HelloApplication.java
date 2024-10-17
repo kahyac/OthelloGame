@@ -13,29 +13,53 @@ public class HelloApplication extends Application {
         final BoardGameView view = new JavaFXBoardGameViewBuilder(stage)
                 .resetView()
                 .setTitle("Hello World")
-                .addLabel("Counter","0")
-                .addButton("IncrementButton", "Increment")
-                .addButton("SoutButton", "Sout")
-                .addButton("removeShapes", "RemoveShapes")
-                .setBoardGameSize(8,8)
+                .addButton("ButtonChangeLabel", "Change button & label")
+                .addButton("ButtonStarSquare", "Add squares and stars")
+                .addButton("ButtonDiamondCircle", "Add diamonds and circles")
+                .addLabel("SampleLabel","Initial Text")
+                .setBoardGameDimensions(8,8)
                 .getView();
-        view.setButtonAction("IncrementButton", ()-> view.updateLabel("Counter", "ttt"));
-        view.setButtonAction("SoutButton", ()-> System.out.println("SoutButton"));
-        view.setButtonAction("removeShapes", ()-> view.removeShapesAtSquare(1,1) );
-        view.setBoardGameAction((i,j)->System.out.println(i +" " + j));
-        for (int row = 0; row < 8; row++) {
-            for (int column = 0; column < 8; column++) {
-                boolean b = (row + column) % 2 == 0;
-                Color colorSquare = b ? Color.LIGHTGREEN : Color.DARKRED;
-                Color colorShape = b ? Color.BLUE : Color.LIGHTBLUE;
-                Shape shape = b ? Shape.SQUARE : Shape.DIAMOND;
-                view.setColorSquare(row, column, colorSquare);
-                view.addShapeAtSquare(row, column, shape, colorShape);
-            }
-        }
+        view.setButtonAction("ButtonChangeLabel", ()-> {
+            view.updateLabeledElement("SampleLabel", "Updated Text");
+            view.updateLabeledElement("ButtonChangeLabel", "Updated Text");
+        });
+        view.setButtonAction("ButtonStarSquare", ()-> {
+            changeSquareColors(view, Color.GREEN, Color.DARKGREEN);
+            changeShapes(view, Shape.STAR, Shape.SQUARE);
+        });
+        view.setButtonAction("ButtonDiamondCircle", ()-> {
+            changeSquareColors(view, Color.WHITE, Color.DARKBLUE);
+            changeShapes(view, Shape.DIAMOND, Shape.CIRCLE);
+        });
+        view.setBoardGameAction(view::removeShapesAtSquare);
+        changeSquareColors(view, Color.DARKRED, Color.LIGHTGREEN);
 
         view.show();
     }
+
+    private static void changeSquareColors(BoardGameView view, Color odd, Color even) {
+        for (int row = 0; row < 8; row++) {
+            for (int column = 0; column < 8; column++) {
+                boolean isEven = (row + column) % 2 == 0;
+                Color colorSquare = isEven ? even  : odd ;
+                view.setColorSquare(row, column, colorSquare);
+                view.addShapeAtSquare(row, column, Shape.TRIANGLE, Color.BLACK);
+            }
+        }
+    }
+
+    static public void changeShapes(BoardGameView view, Shape odd, Shape even) {
+        for (int row = 0; row < 8; row++) {
+            for (int column = 0; column < 8; column++) {
+                boolean isEven = (row + column) % 2 == 0;
+                Color colorShape = isEven ? Color.BLUE : Color.LIGHTBLUE;
+                Shape shape = isEven ? even : odd;
+                view.removeShapesAtSquare(row, column);
+                view.addShapeAtSquare(row, column, shape, colorShape);
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
         launch();
