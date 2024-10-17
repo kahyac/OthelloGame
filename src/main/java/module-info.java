@@ -4,4 +4,5 @@ module fr.univ_amu.m1info.board_game_library {
 
     exports fr.univ_amu.m1info.board_game_library.graphics;
     exports fr.univ_amu.m1info.board_game_library;
+    exports fr.univ_amu.m1info.board_game_library.graphics.app;
 }
