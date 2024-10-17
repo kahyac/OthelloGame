@@ -9,11 +9,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class JavaFXBoardGameView implements BoardGameView {
-    private Scene scene;
     private final Stage stage;
     private BoardGridView boardGridView;
     private Bar bar;
-    private VBox vBox;
 
     public JavaFXBoardGameView(Stage stage) {
         this.stage = stage;
@@ -22,38 +20,34 @@ public class JavaFXBoardGameView implements BoardGameView {
         stage.sizeToScene();
     }
 
-    public void reset() {
-        vBox = new VBox();
+    public synchronized void reset() {
+        VBox vBox = new VBox();
         bar = new Bar();
         boardGridView = new BoardGridView();
         vBox.getChildren().add(bar);
         vBox.getChildren().add(boardGridView);
-        scene = new Scene(vBox);
+        Scene scene = new Scene(vBox);
         stage.setScene(scene);
     }
 
     @Override
-    public void updateLabel(String id, String newText) {
+    public synchronized void updateLabeledElement(String id, String newText) {
         bar.updateLabel(id, newText);
     }
 
     @Override
-    public void setColorSquare(int row, int column, Color color) {
+    public synchronized void setColorSquare(int row, int column, Color color) {
         boardGridView.setColorSquare(row, column, color);
     }
 
     @Override
-    public void addShapeAtSquare(int row, int column, Shape shape, Color color) {
+    public synchronized void addShapeAtSquare(int row, int column, Shape shape, Color color) {
         boardGridView.addShapeAtSquare(row, column, shape, color);
     }
 
     @Override
-    public void removeShapesAtSquare(int row, int column) {
+    public synchronized void removeShapesAtSquare(int row, int column) {
         boardGridView.removeShapesAtSquare(row, column);
-    }
-
-    public Scene getScene() {
-        return scene;
     }
 
     public BoardGridView getBoardGridView() {
@@ -68,22 +62,20 @@ public class JavaFXBoardGameView implements BoardGameView {
         return bar;
     }
 
-    public VBox getVBox() {
-        return vBox;
-    }
-
     @Override
     public void show() {
         stage.show();
     }
 
     @Override
-    public void setButtonAction(String id, ButtonActionOnClick buttonActionOnClick) {
+    public synchronized void setButtonAction(String id, ButtonActionOnClick buttonActionOnClick) {
         bar.setButtonAction(id, buttonActionOnClick);
     }
 
     @Override
-    public void setBoardGameAction(BoardActionOnClick boardActionOnClick) {
+    public synchronized void setBoardGameAction(BoardActionOnClick boardActionOnClick) {
         boardGridView.setAction(boardActionOnClick);
     }
+
+
 }
