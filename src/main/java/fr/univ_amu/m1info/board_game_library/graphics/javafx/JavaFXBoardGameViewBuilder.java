@@ -1,7 +1,7 @@
 package fr.univ_amu.m1info.board_game_library.graphics.javafx;
 
-import fr.univ_amu.m1info.board_game_library.graphics.BoardGameView;
-import fr.univ_amu.m1info.board_game_library.graphics.BoardGameViewBuilder;
+import fr.univ_amu.m1info.board_game_library.graphics.view.BoardGameView;
+import fr.univ_amu.m1info.board_game_library.graphics.javafx.app.BoardGameViewBuilder;
 import javafx.stage.Stage;
 
 public class JavaFXBoardGameViewBuilder implements BoardGameViewBuilder {
@@ -13,6 +13,7 @@ public class JavaFXBoardGameViewBuilder implements BoardGameViewBuilder {
 
     public BoardGameViewBuilder resetView(){
         boardGameView.reset();
+        boardGameView.getBoardGridView().setAction(boardGameView::boardActionOnclick);
         return this;
     }
 
@@ -38,6 +39,7 @@ public class JavaFXBoardGameViewBuilder implements BoardGameViewBuilder {
     @Override
     public BoardGameViewBuilder addButton(String id, String label) {
         boardGameView.getBar().addButton(id, label);
+        boardGameView.getBar().setButtonAction(id, ()->boardGameView.buttonActionOnclick(id));
         return this;
     }
 

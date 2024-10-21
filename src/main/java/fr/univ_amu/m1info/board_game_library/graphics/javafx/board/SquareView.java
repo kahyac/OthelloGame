@@ -1,7 +1,6 @@
 package fr.univ_amu.m1info.board_game_library.graphics.javafx.board;
 
-import fr.univ_amu.m1info.board_game_library.graphics.BoardActionOnClick;
-import fr.univ_amu.m1info.board_game_library.graphics.Shape;
+import fr.univ_amu.m1info.board_game_library.graphics.view.Shape;
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.JavaFXColorMapper;
 import javafx.scene.Group;
 import javafx.scene.layout.StackPane;
@@ -37,7 +36,7 @@ public class SquareView extends StackPane {
         this.setOnMouseClicked(_ -> positionHandler.onClick(this.row, this.column));
     }
 
-    void addShape(Shape shape, fr.univ_amu.m1info.board_game_library.graphics.Color color){
+    void addShape(Shape shape, fr.univ_amu.m1info.board_game_library.graphics.view.Color color){
         javafx.scene.shape.Shape shapeFX = ShapeFactory.makeShape(shape, squareSize);
         shapeFX.setFill(JavaFXColorMapper.getJavaFXColor(color));
         shapes.getChildren().add(shapeFX);

@@ -3,6 +3,9 @@ package fr.univ_amu.m1info.board_game_library.graphics.javafx;
 import fr.univ_amu.m1info.board_game_library.graphics.*;
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.bar.Bar;
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardGridView;
+import fr.univ_amu.m1info.board_game_library.graphics.view.BoardGameView;
+import fr.univ_amu.m1info.board_game_library.graphics.view.Color;
+import fr.univ_amu.m1info.board_game_library.graphics.view.Shape;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -12,6 +15,11 @@ public class JavaFXBoardGameView implements BoardGameView {
     private final Stage stage;
     private BoardGridView boardGridView;
     private Bar bar;
+    private BoardGameController controller;
+
+    public void setController(BoardGameController controller) {
+        this.controller = controller;
+    }
 
     public JavaFXBoardGameView(Stage stage) {
         this.stage = stage;
@@ -62,19 +70,14 @@ public class JavaFXBoardGameView implements BoardGameView {
         return bar;
     }
 
-    @Override
-    public void show() {
-        stage.show();
+
+
+    public void buttonActionOnclick(String id){
+        controller.buttonActionOnClick(id);
     }
 
-    @Override
-    public synchronized void setButtonAction(String id, ButtonActionOnClick buttonActionOnClick) {
-        bar.setButtonAction(id, buttonActionOnClick);
-    }
-
-    @Override
-    public synchronized void setBoardGameAction(BoardActionOnClick boardActionOnClick) {
-        boardGridView.setAction(boardActionOnClick);
+    public void boardActionOnclick(int row, int column){
+        controller.boardActionOnClick(row, column);
     }
 
 

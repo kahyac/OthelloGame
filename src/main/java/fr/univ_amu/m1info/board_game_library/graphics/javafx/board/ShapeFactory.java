@@ -1,6 +1,6 @@
 package fr.univ_amu.m1info.board_game_library.graphics.javafx.board;
 
-import fr.univ_amu.m1info.board_game_library.graphics.Shape;
+import fr.univ_amu.m1info.board_game_library.graphics.view.Shape;
 import javafx.collections.ObservableList;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
