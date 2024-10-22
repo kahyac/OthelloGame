@@ -1,6 +1,5 @@
 package fr.univ_amu.m1info.board_game_library.graphics.javafx.bar;
 
-import fr.univ_amu.m1info.board_game_library.graphics.ButtonActionOnClick;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

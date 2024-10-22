@@ -1,4 +1,4 @@
-package fr.univ_amu.m1info.board_game_library.graphics.javafx;
+package fr.univ_amu.m1info.board_game_library.graphics.javafx.color;
 
 
 import fr.univ_amu.m1info.board_game_library.graphics.Color;

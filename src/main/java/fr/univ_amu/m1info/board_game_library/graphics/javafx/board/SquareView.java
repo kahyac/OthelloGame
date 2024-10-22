@@ -1,8 +1,7 @@
 package fr.univ_amu.m1info.board_game_library.graphics.javafx.board;
 
-import fr.univ_amu.m1info.board_game_library.graphics.BoardActionOnClick;
 import fr.univ_amu.m1info.board_game_library.graphics.Shape;
-import fr.univ_amu.m1info.board_game_library.graphics.javafx.JavaFXColorMapper;
+import fr.univ_amu.m1info.board_game_library.graphics.javafx.color.JavaFXColorMapper;
 import javafx.scene.Group;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
