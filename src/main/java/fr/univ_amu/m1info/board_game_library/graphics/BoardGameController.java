@@ -24,7 +24,7 @@ public interface BoardGameController {
     /**
      * Initialize the view, method called at the start of the application.
      *
-     * @param view the game view, implemented by the {@link BoardGameView} interface.
+     * @param view the game view to be initialized, implemented by the {@link BoardGameView} interface.
      */
     void initializeViewOnStart(BoardGameView view);
 
