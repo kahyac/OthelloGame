@@ -24,14 +24,14 @@ public interface BoardGameView {
     void setCellColor(int row, int column, Color color);
 
     /**
-     * Adds a shape to a specific square on the game board.
+     * Adds a shape to a specific cell on the game board.
      *
-     * @param row the row of the square where the shape will be added.
-     * @param column the column of the square where the shape will be added.
+     * @param row the row of the cell where the shape will be added.
+     * @param column the column of the cell where the shape will be added.
      * @param shape the shape to add.
      * @param color the color of the shape.
      */
-    void addShapeAtSquare(int row, int column, Shape shape, Color color);
+    void addShapeAtCell(int row, int column, Shape shape, Color color);
 
     /**
      * Removes all shapes from a specific square on the game board.

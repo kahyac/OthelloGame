@@ -13,10 +13,9 @@ public interface BoardGameApplicationLauncher {
      * Launches the board game application with the specified configuration, controller, and startup logic.
      *
      * @param configuration the configuration of the board game, represented by {@link BoardGameConfiguration}.
-     * @param controller the controller that manages game interactions, implemented by {@link BoardGameController}.
-     * @param onStart the logic for initializing the game view, implemented by {@link ViewInitializer}.
+     * @param onStart       the logic for initializing the game view, implemented by {@link ViewInitializer}.
+     * @param controller    the controller that manages game interactions, implemented by {@link BoardGameController}.
      */
     void launchApplication(BoardGameConfiguration configuration,
-                           BoardGameController controller,
-                           ViewInitializer onStart);
+                           ViewInitializer onStart, BoardGameController controller);
 }

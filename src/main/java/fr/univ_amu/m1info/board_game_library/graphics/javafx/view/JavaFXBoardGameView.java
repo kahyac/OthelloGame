@@ -48,7 +48,7 @@ public class JavaFXBoardGameView implements BoardGameControllableView {
     }
 
     @Override
-    public synchronized void addShapeAtSquare(int row, int column, Shape shape, Color color) {
+    public synchronized void addShapeAtCell(int row, int column, Shape shape, Color color) {
         boardGridView.addShapeAtSquare(row, column, shape, color);
     }
 

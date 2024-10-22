@@ -58,7 +58,7 @@ public class HelloApplication {
             changeShapes(view, Shape.TRIANGLE, Color.BLACK, Shape.CIRCLE, Color.RED);
         };
         BoardGameApplicationLauncher launcher = JavaFXBoardGameApplicationLauncher.getInstance();
-        launcher.launchApplication(boardGameConfiguration, controller, viewInitializer);
+        launcher.launchApplication(boardGameConfiguration, viewInitializer, controller);
     }
 
     private static void changeCellColors(BoardGameView view, Color oddColor, Color evenColor) {
@@ -67,7 +67,7 @@ public class HelloApplication {
                 boolean isEven = (row + column) % 2 == 0;
                 Color colorSquare = isEven ? evenColor : oddColor;
                 view.setCellColor(row, column, colorSquare);
-                view.addShapeAtSquare(row, column, Shape.TRIANGLE, Color.BLACK);
+                view.addShapeAtCell(row, column, Shape.TRIANGLE, Color.BLACK);
             }
         }
     }
@@ -79,7 +79,7 @@ public class HelloApplication {
                 Color colorShape = isEven ? evenColor : oddColor;
                 Shape shape = isEven ? evenShape : oddShape;
                 view.removeShapesAtCell(row, column);
-                view.addShapeAtSquare(row, column, shape, colorShape);
+                view.addShapeAtCell(row, column, shape, colorShape);
             }
         }
     }
