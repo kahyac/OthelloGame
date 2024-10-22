@@ -1,7 +1,7 @@
-package fr.univ_amu.m1info.board_game_library.graphics.javafx;
+package fr.univ_amu.m1info.board_game_library.graphics.javafx.color;
 
 
-import fr.univ_amu.m1info.board_game_library.graphics.view.Color;
+import fr.univ_amu.m1info.board_game_library.graphics.Color;
 
 public class JavaFXColorMapper {
     private final static javafx.scene.paint.Color LIGHT_RED = javafx.scene.paint.Color.valueOf("#ff474c");

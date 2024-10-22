@@ -1,7 +1,5 @@
-package fr.univ_amu.m1info.board_game_library.graphics.javafx;
+package fr.univ_amu.m1info.board_game_library.graphics.javafx.view;
 
-import fr.univ_amu.m1info.board_game_library.graphics.view.BoardGameView;
-import fr.univ_amu.m1info.board_game_library.graphics.javafx.app.BoardGameViewBuilder;
 import javafx.stage.Stage;
 
 public class JavaFXBoardGameViewBuilder implements BoardGameViewBuilder {
@@ -44,7 +42,7 @@ public class JavaFXBoardGameViewBuilder implements BoardGameViewBuilder {
     }
 
     @Override
-    public BoardGameView getView() {
+    public BoardGameControllableView getView() {
         return boardGameView;
     }
 

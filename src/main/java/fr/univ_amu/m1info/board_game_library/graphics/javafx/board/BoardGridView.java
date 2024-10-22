@@ -1,8 +1,8 @@
 package fr.univ_amu.m1info.board_game_library.graphics.javafx.board;
 
-import fr.univ_amu.m1info.board_game_library.graphics.view.Color;
-import fr.univ_amu.m1info.board_game_library.graphics.view.Shape;
-import fr.univ_amu.m1info.board_game_library.graphics.javafx.JavaFXColorMapper;
+import fr.univ_amu.m1info.board_game_library.graphics.Color;
+import fr.univ_amu.m1info.board_game_library.graphics.Shape;
+import fr.univ_amu.m1info.board_game_library.graphics.javafx.color.JavaFXColorMapper;
 import javafx.scene.layout.GridPane;
 
 

@@ -1,14 +1,10 @@
 package fr.univ_amu.m1info.board_game_library;
 
-import fr.univ_amu.m1info.board_game_library.graphics.BoardGameController;
+import fr.univ_amu.m1info.board_game_library.graphics.*;
 import fr.univ_amu.m1info.board_game_library.graphics.configuration.BoardGameConfiguration;
 import fr.univ_amu.m1info.board_game_library.graphics.configuration.LabeledElementConfiguration;
 import fr.univ_amu.m1info.board_game_library.graphics.configuration.LabeledElementKind;
 import fr.univ_amu.m1info.board_game_library.graphics.configuration.BoardGameDimensions;
-import fr.univ_amu.m1info.board_game_library.graphics.view.BoardGameView;
-import fr.univ_amu.m1info.board_game_library.graphics.view.Color;
-import fr.univ_amu.m1info.board_game_library.graphics.view.Shape;
-import fr.univ_amu.m1info.board_game_library.graphics.javafx.app.JavaFXBoardGameApplication;
 
 import java.util.List;
 
@@ -25,7 +21,7 @@ public class HelloApplication {
 
         @Override
         public void boardActionOnClick(int row, int column) {
-            view.removeShapesAtSquare(row, column);
+            view.removeShapesAtCell(row, column);
         }
 
         @Override
@@ -36,11 +32,11 @@ public class HelloApplication {
                     view.updateLabeledElement("ButtonChangeLabel", "Updated Text");
                 }
                 case "ButtonStarSquare" -> {
-                    changeSquareColors(view, Color.GREEN, Color.DARKGREEN);
+                    changeCellColors(view, Color.GREEN, Color.DARKGREEN);
                     changeShapes(view, Shape.STAR, Color.DARKBLUE, Shape.SQUARE, Color.DARKRED);
                 }
                 case "ButtonDiamondCircle" -> {
-                    changeSquareColors(view, Color.WHITE, Color.DARKBLUE);
+                    changeCellColors(view, Color.WHITE, Color.DARKBLUE);
                     changeShapes(view, Shape.DIAMOND, Color.LIGHTBLUE, Shape.CIRCLE, Color.RED);
                 }
                 default -> throw new IllegalStateException("Unexpected event, button id : " + buttonId);
@@ -57,19 +53,20 @@ public class HelloApplication {
                         new LabeledElementConfiguration("Initial Text", "Initial Text", LabeledElementKind.TEXT)
                 ));
         BoardGameController controller = new HelloController();
-        JavaFXBoardGameApplication.start(boardGameConfiguration, controller,
-                view -> {
-                    changeSquareColors(view, Color.GREEN, Color.LIGHTGREEN);
-                    changeShapes(view, Shape.TRIANGLE, Color.BLACK, Shape.CIRCLE, Color.RED);
-                });
+        ViewInitializer viewInitializer = view -> {
+            changeCellColors(view, Color.GREEN, Color.LIGHTGREEN);
+            changeShapes(view, Shape.TRIANGLE, Color.BLACK, Shape.CIRCLE, Color.RED);
+        };
+        BoardGameApplicationLauncher launcher = JavaFXBoardGameApplicationLauncher.getInstance();
+        launcher.launchApplication(boardGameConfiguration, controller, viewInitializer);
     }
 
-    private static void changeSquareColors(BoardGameView view, Color odd, Color even) {
+    private static void changeCellColors(BoardGameView view, Color oddColor, Color evenColor) {
         for (int row = 0; row < 8; row++) {
             for (int column = 0; column < 8; column++) {
                 boolean isEven = (row + column) % 2 == 0;
-                Color colorSquare = isEven ? even : odd;
-                view.setColorSquare(row, column, colorSquare);
+                Color colorSquare = isEven ? evenColor : oddColor;
+                view.setCellColor(row, column, colorSquare);
                 view.addShapeAtSquare(row, column, Shape.TRIANGLE, Color.BLACK);
             }
         }
@@ -81,7 +78,7 @@ public class HelloApplication {
                 boolean isEven = (row + column) % 2 == 0;
                 Color colorShape = isEven ? evenColor : oddColor;
                 Shape shape = isEven ? evenShape : oddShape;
-                view.removeShapesAtSquare(row, column);
+                view.removeShapesAtCell(row, column);
                 view.addShapeAtSquare(row, column, shape, colorShape);
             }
         }

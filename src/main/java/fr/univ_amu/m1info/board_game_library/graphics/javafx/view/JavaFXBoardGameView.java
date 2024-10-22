@@ -1,17 +1,16 @@
-package fr.univ_amu.m1info.board_game_library.graphics.javafx;
+package fr.univ_amu.m1info.board_game_library.graphics.javafx.view;
 
-import fr.univ_amu.m1info.board_game_library.graphics.*;
+import fr.univ_amu.m1info.board_game_library.graphics.BoardGameController;
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.bar.Bar;
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardGridView;
-import fr.univ_amu.m1info.board_game_library.graphics.view.BoardGameView;
-import fr.univ_amu.m1info.board_game_library.graphics.view.Color;
-import fr.univ_amu.m1info.board_game_library.graphics.view.Shape;
+import fr.univ_amu.m1info.board_game_library.graphics.Color;
+import fr.univ_amu.m1info.board_game_library.graphics.Shape;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class JavaFXBoardGameView implements BoardGameView {
+public class JavaFXBoardGameView implements BoardGameControllableView {
     private final Stage stage;
     private BoardGridView boardGridView;
     private Bar bar;
@@ -44,7 +43,7 @@ public class JavaFXBoardGameView implements BoardGameView {
     }
 
     @Override
-    public synchronized void setColorSquare(int row, int column, Color color) {
+    public synchronized void setCellColor(int row, int column, Color color) {
         boardGridView.setColorSquare(row, column, color);
     }
 
@@ -54,7 +53,7 @@ public class JavaFXBoardGameView implements BoardGameView {
     }
 
     @Override
-    public synchronized void removeShapesAtSquare(int row, int column) {
+    public synchronized void removeShapesAtCell(int row, int column) {
         boardGridView.removeShapesAtSquare(row, column);
     }
 

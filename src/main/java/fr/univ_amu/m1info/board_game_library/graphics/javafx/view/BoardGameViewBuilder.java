@@ -1,6 +1,4 @@
-package fr.univ_amu.m1info.board_game_library.graphics.javafx.app;
-
-import fr.univ_amu.m1info.board_game_library.graphics.view.BoardGameView;
+package fr.univ_amu.m1info.board_game_library.graphics.javafx.view;
 
 public interface BoardGameViewBuilder {
     BoardGameViewBuilder resetView();
@@ -8,5 +6,5 @@ public interface BoardGameViewBuilder {
     BoardGameViewBuilder setTitle(String title);
     BoardGameViewBuilder addLabel(String id, String initialText);
     BoardGameViewBuilder addButton(String id, String label);
-    BoardGameView getView();
+    BoardGameControllableView getView();
 }

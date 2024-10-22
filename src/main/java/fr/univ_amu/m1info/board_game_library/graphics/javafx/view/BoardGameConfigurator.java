@@ -1,10 +1,10 @@
-package fr.univ_amu.m1info.board_game_library.graphics.javafx.app;
+package fr.univ_amu.m1info.board_game_library.graphics.javafx.view;
 
 import fr.univ_amu.m1info.board_game_library.graphics.configuration.BoardGameConfiguration;
 import fr.univ_amu.m1info.board_game_library.graphics.configuration.LabeledElementConfiguration;
 
 public class BoardGameConfigurator {
-    void configure(BoardGameViewBuilder boardGameViewBuilder,
+    public void configure(BoardGameViewBuilder boardGameViewBuilder,
                    BoardGameConfiguration boardGameConfiguration) {
         boardGameViewBuilder = boardGameViewBuilder
                 .resetView()
