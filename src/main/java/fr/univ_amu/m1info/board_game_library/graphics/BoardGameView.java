@@ -34,10 +34,10 @@ public interface BoardGameView {
     void addShapeAtCell(int row, int column, Shape shape, Color color);
 
     /**
-     * Removes all shapes from a specific square on the game board.
+     * Removes all shapes from a specific cell on the game board.
      *
-     * @param row the row of the square to clear.
-     * @param column the column of the square to clear.
+     * @param row the row of the cell to clear.
+     * @param column the column of the cell to clear.
      */
     void removeShapesAtCell(int row, int column);
 

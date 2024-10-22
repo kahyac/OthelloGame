@@ -10,12 +10,11 @@ import fr.univ_amu.m1info.board_game_library.graphics.configuration.BoardGameCon
 public interface BoardGameApplicationLauncher {
 
     /**
-     * Launches the board game application with the specified configuration, controller, and startup logic.
+     * Launches the board game application with the specified configuration and controller.
      *
      * @param configuration the configuration of the board game, represented by {@link BoardGameConfiguration}.
-     * @param onStart       the logic for initializing the game view, implemented by {@link ViewInitializer}.
      * @param controller    the controller that manages game interactions, implemented by {@link BoardGameController}.
      */
     void launchApplication(BoardGameConfiguration configuration,
-                           ViewInitializer onStart, BoardGameController controller);
+                           BoardGameController controller);
 }

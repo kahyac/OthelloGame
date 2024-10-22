@@ -14,7 +14,9 @@ public class HelloApplication {
         private BoardGameView view;
 
         @Override
-        public void setView(BoardGameView view) {
+        public void initializeViewOnStart(BoardGameView view) {
+            changeCellColors(view, Color.GREEN, Color.LIGHTGREEN);
+            changeShapes(view, Shape.TRIANGLE, Color.BLACK, Shape.CIRCLE, Color.RED);
             this.view = view;
         }
 
@@ -53,12 +55,8 @@ public class HelloApplication {
                         new LabeledElementConfiguration("Initial Text", "Initial Text", LabeledElementKind.TEXT)
                 ));
         BoardGameController controller = new HelloController();
-        ViewInitializer viewInitializer = view -> {
-            changeCellColors(view, Color.GREEN, Color.LIGHTGREEN);
-            changeShapes(view, Shape.TRIANGLE, Color.BLACK, Shape.CIRCLE, Color.RED);
-        };
         BoardGameApplicationLauncher launcher = JavaFXBoardGameApplicationLauncher.getInstance();
-        launcher.launchApplication(boardGameConfiguration, viewInitializer, controller);
+        launcher.launchApplication(boardGameConfiguration, controller);
     }
 
     private static void changeCellColors(BoardGameView view, Color oddColor, Color evenColor) {

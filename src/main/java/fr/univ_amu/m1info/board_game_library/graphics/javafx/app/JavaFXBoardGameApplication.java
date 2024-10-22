@@ -15,13 +15,11 @@ public class JavaFXBoardGameApplication extends Application {
         var launcher = JavaFXBoardGameApplicationLauncher.getInstance();
         var configuration = launcher.getConfiguration();
         var controller = launcher.getController();
-        var onStart = launcher.getOnStart();
         final JavaFXBoardGameViewBuilder viewBuilder = new JavaFXBoardGameViewBuilder(stage);
         new BoardGameConfigurator().configure(viewBuilder, configuration);
         BoardGameControllableView view = viewBuilder.getView();
         view.setController(controller);
-        controller.setView(view);
-        onStart.initialize(view);
+        controller.initializeViewOnStart(view);
         stage.show();
     }
 }

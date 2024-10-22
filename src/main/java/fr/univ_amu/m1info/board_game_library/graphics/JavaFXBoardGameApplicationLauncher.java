@@ -22,9 +22,6 @@ public class JavaFXBoardGameApplicationLauncher implements BoardGameApplicationL
     /** The controller that manages game interactions. */
     private BoardGameController controller;
 
-    /** The view initializer to set up the initial game view. */
-    private ViewInitializer onStart;
-
     /** Private constructor to prevent direct instantiation. */
     private JavaFXBoardGameApplicationLauncher() {}
 
@@ -66,28 +63,17 @@ public class JavaFXBoardGameApplicationLauncher implements BoardGameApplicationL
     }
 
     /**
-     * Retrieves the view initializer that sets up the initial state of the game view.
-     *
-     * @return the {@link ViewInitializer} for the game.
-     */
-    public ViewInitializer getOnStart() {
-        return onStart;
-    }
-
-    /**
-     * Launches the JavaFX board game application with the specified configuration, controller, and view initializer.
+     * Launches the JavaFX board game application with the specified configuration and controller.
      * This method sets the internal fields and starts the JavaFX application.
      *
      * @param configuration the configuration of the board game, represented by {@link BoardGameConfiguration}.
-     * @param onStart       the view initializer that sets up the game view, implemented by {@link ViewInitializer}.
      * @param controller    the controller that manages game interactions, implemented by {@link BoardGameController}.
      */
     @Override
     public void launchApplication(BoardGameConfiguration configuration,
-                                  ViewInitializer onStart, BoardGameController controller) {
+                                  BoardGameController controller) {
         this.configuration = configuration;
         this.controller = controller;
-        this.onStart = onStart;
         Application.launch(JavaFXBoardGameApplication.class);
     }
 }

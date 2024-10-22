@@ -22,11 +22,11 @@ public interface BoardGameController {
     void buttonActionOnClick(String buttonId);
 
     /**
-     * Sets the view for the board game to be controlled.
+     * Initialize the view, method called at the start of the application.
      *
      * @param view the game view, implemented by the {@link BoardGameView} interface.
      */
-    void setView(BoardGameView view);
+    void initializeViewOnStart(BoardGameView view);
 
 
 }
