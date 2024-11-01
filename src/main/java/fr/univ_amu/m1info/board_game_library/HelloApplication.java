@@ -16,8 +16,16 @@ public class HelloApplication {
         @Override
         public void initializeViewOnStart(BoardGameView view) {
             changeCellColors(view, Color.GREEN, Color.GREEN);
-            changeShapes(view, Shape.CIRCLE, Color.BLACK, Shape.CIRCLE, Color.WHITE);
+
             this.view = view;
+            int centerRow = 4; // Le plateau 8x8 a ses cases centrales autour des index 3 et 4 (indices commençant à 0)
+            int centerCol = 4;
+
+            // Placer les pions au centre du plateau selon les règles d'Othello
+            view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE);  // Cellule [3][3] - Blanc
+            view.addShapeAtCell(centerRow - 1, centerCol, Shape.CIRCLE, Color.BLACK);      // Cellule [3][4] - Noir
+            view.addShapeAtCell(centerRow, centerCol - 1, Shape.CIRCLE, Color.BLACK);      // Cellule [4][3] - Noir
+            view.addShapeAtCell(centerRow, centerCol, Shape.CIRCLE, Color.WHITE);
         }
 
 
@@ -35,12 +43,27 @@ public class HelloApplication {
                 }
                 case "ButtonStarSquare" -> {
                     changeCellColors(view, Color.GREEN, Color.GREEN);
-                    changeShapes(view, Shape.CIRCLE, Color.BLACK, Shape.CIRCLE, Color.WHITE);
-                }
+                    this.view = view;
+                    int centerRow = 4; // Le plateau 8x8 a ses cases centrales autour des index 3 et 4 (indices commençant à 0)
+                    int centerCol = 4;
+
+                    // Placer les pions au centre du plateau selon les règles d'Othello
+                    view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE);  // Cellule [3][3] - Blanc
+                    view.addShapeAtCell(centerRow - 1, centerCol, Shape.CIRCLE, Color.BLACK);      // Cellule [3][4] - Noir
+                    view.addShapeAtCell(centerRow, centerCol - 1, Shape.CIRCLE, Color.BLACK);      // Cellule [4][3] - Noir
+                    view.addShapeAtCell(centerRow, centerCol, Shape.CIRCLE, Color.WHITE);                }
                 case "ButtonDiamondCircle" -> {
                     changeCellColors(view, Color.GREEN, Color.GREEN);
-                    changeShapes(view, Shape.CIRCLE, Color.BLACK, Shape.CIRCLE, Color.WHITE);
-                }
+
+                    this.view = view;
+                    int centerRow = 4; // Le plateau 8x8 a ses cases centrales autour des index 3 et 4 (indices commençant à 0)
+                    int centerCol = 4;
+
+                    // Placer les pions au centre du plateau selon les règles d'Othello
+                    view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE);  // Cellule [3][3] - Blanc
+                    view.addShapeAtCell(centerRow - 1, centerCol, Shape.CIRCLE, Color.BLACK);      // Cellule [3][4] - Noir
+                    view.addShapeAtCell(centerRow, centerCol - 1, Shape.CIRCLE, Color.BLACK);      // Cellule [4][3] - Noir
+                    view.addShapeAtCell(centerRow, centerCol, Shape.CIRCLE, Color.WHITE);                }
                 default -> throw new IllegalStateException("Unexpected event, button id : " + buttonId);
             }
         }
@@ -65,7 +88,6 @@ public class HelloApplication {
                 boolean isEven = (row + column) % 2 == 0;
                 Color colorSquare = isEven ? evenColor : oddColor;
                 view.setCellColor(row, column, colorSquare);
-                view.addShapeAtCell(row, column, Shape.CIRCLE, Color.BLACK);
             }
         }
     }
