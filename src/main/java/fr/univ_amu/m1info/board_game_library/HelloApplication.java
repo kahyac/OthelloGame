@@ -15,8 +15,8 @@ public class HelloApplication {
 
         @Override
         public void initializeViewOnStart(BoardGameView view) {
-            changeCellColors(view, Color.GREEN, Color.LIGHTGREEN);
-            changeShapes(view, Shape.TRIANGLE, Color.BLACK, Shape.CIRCLE, Color.RED);
+            changeCellColors(view, Color.GREEN, Color.GREEN);
+            changeShapes(view, Shape.CIRCLE, Color.BLACK, Shape.CIRCLE, Color.WHITE);
             this.view = view;
         }
 
@@ -34,12 +34,12 @@ public class HelloApplication {
                     view.updateLabeledElement("ButtonChangeLabel", "Updated Text");
                 }
                 case "ButtonStarSquare" -> {
-                    changeCellColors(view, Color.GREEN, Color.DARKGREEN);
-                    changeShapes(view, Shape.STAR, Color.DARKBLUE, Shape.SQUARE, Color.DARKRED);
+                    changeCellColors(view, Color.GREEN, Color.GREEN);
+                    changeShapes(view, Shape.CIRCLE, Color.BLACK, Shape.CIRCLE, Color.WHITE);
                 }
                 case "ButtonDiamondCircle" -> {
-                    changeCellColors(view, Color.WHITE, Color.DARKBLUE);
-                    changeShapes(view, Shape.DIAMOND, Color.LIGHTBLUE, Shape.CIRCLE, Color.RED);
+                    changeCellColors(view, Color.GREEN, Color.GREEN);
+                    changeShapes(view, Shape.CIRCLE, Color.BLACK, Shape.CIRCLE, Color.WHITE);
                 }
                 default -> throw new IllegalStateException("Unexpected event, button id : " + buttonId);
             }
@@ -65,7 +65,7 @@ public class HelloApplication {
                 boolean isEven = (row + column) % 2 == 0;
                 Color colorSquare = isEven ? evenColor : oddColor;
                 view.setCellColor(row, column, colorSquare);
-                view.addShapeAtCell(row, column, Shape.TRIANGLE, Color.BLACK);
+                view.addShapeAtCell(row, column, Shape.CIRCLE, Color.BLACK);
             }
         }
     }

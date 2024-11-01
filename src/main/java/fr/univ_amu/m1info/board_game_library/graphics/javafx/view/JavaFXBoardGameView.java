@@ -23,8 +23,7 @@ public class JavaFXBoardGameView implements BoardGameControllableView {
     public JavaFXBoardGameView(Stage stage) {
         this.stage = stage;
         stage.setOnCloseRequest(_ -> Platform.exit());
-        stage.setResizable(false);
-        stage.sizeToScene();
+        stage.setResizable(true);
     }
 
     public synchronized void reset() {
