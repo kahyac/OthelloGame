@@ -34,14 +34,17 @@ public class JavaFXBoardGameApplication extends Application {
 
         // Ajouter la barre d'outils en haut
         root.setTop(view.getBar());
-
+        // Cree un Vbox pour les joueur
+        VBox PlayerContainer= new VBox(view.getBarPlayer());
+         PlayerContainer.setPadding(new Insets(80));
+         root.setLeft(PlayerContainer);
         // Créer un VBox pour le plateau de jeu, centré avec des marges
         VBox boardContainer = new VBox(view.getBoardGridView());
-        boardContainer.setPadding(new Insets(100)); // marges autour du plateau
+        boardContainer.setPadding(new Insets(30)); // marges autour du plateau
         root.setCenter(boardContainer);
 
         // Créer et afficher la scène
-        Scene scene = new Scene(root, 750, 750);
+        Scene scene = new Scene(root, 1300, 750);
         stage.setTitle("Board Game Application");
         stage.setScene(scene);
         stage.show();

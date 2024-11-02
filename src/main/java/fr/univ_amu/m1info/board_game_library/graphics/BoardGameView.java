@@ -39,7 +39,6 @@ public interface BoardGameView {
      * @param row the row of the cell to clear.
      * @param column the column of the cell to clear.
      */
-    void removeShapesAtCell(int row, int column);
 
 
 }

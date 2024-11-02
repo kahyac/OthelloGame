@@ -12,6 +12,7 @@ public class HelloApplication {
 
     private static class HelloController implements BoardGameController {
         private BoardGameView view;
+        private boolean[][] occupiedCells = new boolean[8][8]; // To keep track of occupie
 
         @Override
         public void initializeViewOnStart(BoardGameView view) {
@@ -21,17 +22,30 @@ public class HelloApplication {
             int centerRow = 4; // Le plateau 8x8 a ses cases centrales autour des index 3 et 4 (indices commençant à 0)
             int centerCol = 4;
 
-            // Placer les pions au centre du plateau selon les règles d'Othello
-            view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE);  // Cellule [3][3] - Blanc
-            view.addShapeAtCell(centerRow - 1, centerCol, Shape.CIRCLE, Color.BLACK);      // Cellule [3][4] - Noir
-            view.addShapeAtCell(centerRow, centerCol - 1, Shape.CIRCLE, Color.BLACK);      // Cellule [4][3] - Noir
+            // Place the initial Othello pieces and mark cells as occupied
+            view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE);
+            occupiedCells[centerRow - 1][centerCol - 1] = true;
+
+            view.addShapeAtCell(centerRow - 1, centerCol, Shape.CIRCLE, Color.BLACK);
+            occupiedCells[centerRow - 1][centerCol] = true;
+
+            view.addShapeAtCell(centerRow, centerCol - 1, Shape.CIRCLE, Color.BLACK);
+            occupiedCells[centerRow][centerCol - 1] = true;
+
             view.addShapeAtCell(centerRow, centerCol, Shape.CIRCLE, Color.WHITE);
+            occupiedCells[centerRow][centerCol] = true;
         }
 
 
         @Override
         public void boardActionOnClick(int row, int column) {
-            view.removeShapesAtCell(row, column);
+            // Only add a shape if the cell is empty
+            if (!occupiedCells[row][column]) {
+                view.addShapeAtCell(row, column, Shape.CIRCLE, Color.BLACK);
+                occupiedCells[row][column] = true; // Mark the cell as occupied
+            } else {
+                System.out.println("Cell [" + row + "][" + column + "] is already occupied!");
+            }
         }
 
         @Override
@@ -98,7 +112,6 @@ public class HelloApplication {
                 boolean isEven = (row + column) % 2 == 0;
                 Color colorShape = isEven ? evenColor : oddColor;
                 Shape shape = isEven ? evenShape : oddShape;
-                view.removeShapesAtCell(row, column);
                 view.addShapeAtCell(row, column, shape, colorShape);
             }
         }
