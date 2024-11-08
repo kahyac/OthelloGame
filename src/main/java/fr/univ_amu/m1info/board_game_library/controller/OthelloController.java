@@ -15,6 +15,7 @@ public class OthelloController implements BoardGameController {
         int centerRow = 4;
         int centerCol = 4;
 
+
         // Place the initial Othello pieces and mark cells as occupied
         view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE);
         occupiedCells[centerRow - 1][centerCol - 1] = true;
@@ -32,7 +33,7 @@ public class OthelloController implements BoardGameController {
     @Override
     public void boardActionOnClick(int row, int column) {
         if (!occupiedCells[row][column]) {
-            view.addShapeAtCell(row, column, Shape.CIRCLE, Color.BLACK);
+            view.addShapeAtCell(row, column, Shape.CIRCLE, Color.WHITE);
             occupiedCells[row][column] = true;
         } else {
             System.out.println("Cell [" + row + "][" + column + "] is already occupied!");

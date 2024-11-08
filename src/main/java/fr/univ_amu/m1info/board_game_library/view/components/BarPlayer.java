@@ -17,8 +17,8 @@ public class BarPlayer extends HBox {
         Players players = new Players();
 
         // Ajouter les informations pour chaque joueur sous forme de label
-        addPlayerInfo("Joueur 1", players.getTab()[0]);
-        addPlayerInfo("Joueur 2", players.getTab()[1]);
+        addPlayerInfo("Player 1", players.getTab()[0]);
+        addPlayerInfo("Player 2", players.getTab()[1]);
     }
 
     private void addPlayerInfo(String playerLabel, String playerName) {
