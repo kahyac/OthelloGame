@@ -1,60 +1,92 @@
 package fr.univ_amu.m1info.board_game_library;
 
 import fr.univ_amu.m1info.board_game_library.graphics.*;
-import fr.univ_amu.m1info.board_game_library.graphics.configuration.BoardGameConfiguration;
-import fr.univ_amu.m1info.board_game_library.graphics.configuration.LabeledElementConfiguration;
-import fr.univ_amu.m1info.board_game_library.graphics.configuration.LabeledElementKind;
-import fr.univ_amu.m1info.board_game_library.graphics.configuration.BoardGameDimensions;
+import fr.univ_amu.m1info.board_game_library.graphics.configuration.*;
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardActionOnHover;
-import fr.univ_amu.m1info.board_game_library.model.OthelloBoard;
-import fr.univ_amu.m1info.board_game_library.model.OthelloMoveValidator;
-import fr.univ_amu.m1info.board_game_library.model.Piece;
-
+import fr.univ_amu.m1info.board_game_library.model.*;
 import java.util.List;
 
 public class HelloApplication {
 
     private static class HelloController implements BoardGameController, BoardActionOnHover {
         private BoardGameView view;
-        private boolean[][] occupiedCells = new boolean[8][8]; // To keep track of occupie
         private OthelloBoard board;        // Represents the game board
         private Piece currentPlayer;       // Indicates current player (BLACK or WHITE)
         private OthelloMoveValidator moveValidator; // Validates moves
+        private PieceFlipper pieceFlipper; // To return captured opponent pieces
 
 
         @Override
         public void initializeViewOnStart(BoardGameView view) {
-            changeCellColors(view, Color.GREEN, Color.GREEN);
-
             this.view = view;
-            int centerRow = 4; // Le plateau 8x8 a ses cases centrales autour des index 3 et 4 (indices commençant à 0)
-            int centerCol = 4;
+            this.board = new OthelloBoard();
+            this.currentPlayer = Piece.BLACK;
+            this.moveValidator = new OthelloMoveValidator();
+            this.pieceFlipper = new PieceFlipper();
+            initializeStartingBoard();
+        }
 
-            // Place the initial Othello pieces and mark cells as occupied
-            view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE);
-            occupiedCells[centerRow - 1][centerCol - 1] = true;
+        private void initializeStartingBoard() {
+            // Placing the central pieces of the Othello game
+            view.addShapeAtCell(3, 3, Shape.CIRCLE, Color.WHITE);
+            board.placePiece(3, 3, Piece.WHITE);
 
-            view.addShapeAtCell(centerRow - 1, centerCol, Shape.CIRCLE, Color.BLACK);
-            occupiedCells[centerRow - 1][centerCol] = true;
+            view.addShapeAtCell(3, 4, Shape.CIRCLE, Color.BLACK);
+            board.placePiece(3, 4, Piece.BLACK);
 
-            view.addShapeAtCell(centerRow, centerCol - 1, Shape.CIRCLE, Color.BLACK);
-            occupiedCells[centerRow][centerCol - 1] = true;
+            view.addShapeAtCell(4, 3, Shape.CIRCLE, Color.BLACK);
+            board.placePiece(4, 3, Piece.BLACK);
 
-            view.addShapeAtCell(centerRow, centerCol, Shape.CIRCLE, Color.WHITE);
-            occupiedCells[centerRow][centerCol] = true;
+            view.addShapeAtCell(4, 4, Shape.CIRCLE, Color.WHITE);
+            board.placePiece(4, 4, Piece.WHITE);
         }
 
 
         @Override
         public void boardActionOnClick(int row, int column) {
-            // Only add a shape if the cell is empty
-            if (!occupiedCells[row][column]) {
-                view.addShapeAtCell(row, column, Shape.CIRCLE, Color.BLACK);
-                occupiedCells[row][column] = true; // Mark the cell as occupied
+            // Check if the box is occupied
+            if (board.getPieceAt(row, column) != Piece.EMPTY) {
+                System.out.println("La case est déjà occupée !");
+                return;
+            }
+            // Check if the move is valid
+            if (moveValidator.isValidMove(board, row, column, currentPlayer)) {
+                // Place the pawn
+                board.placePiece(row, column, currentPlayer);
+
+                // Turning over the opponent's pawns
+                pieceFlipper.flipPieces(board, row, column, currentPlayer);
+
+                // Switch to next player
+                togglePlayer();
+
+                // Update the possible moves for the next player
+                highlightValidMoves(currentPlayer);
             } else {
-                System.out.println("Cell [" + row + "][" + column + "] is already occupied!");
+                System.out.println("Coup invalide !");
             }
         }
+
+
+        private void togglePlayer() {
+            currentPlayer = (currentPlayer == Piece.BLACK) ? Piece.WHITE : Piece.BLACK;
+        }
+
+        private void highlightValidMoves(Piece currentPlayer) {
+            for (int row = 0; row < board.getSize(); row++) {
+                for (int col = 0; col < board.getSize(); col++) {
+                    // Check that the square is empty and that the move is valid
+                    if (board.getPieceAt(row, col) == Piece.EMPTY
+                            && moveValidator.isValidMove(board, row, col, currentPlayer)) {
+                        view.setCellColor(row, col, Color.LIGHTGREEN); // Highlighting valid shots
+                    } else {
+                        view.setCellColor(row, col, Color.GREEN); // Default color
+                    }
+                }
+            }
+        }
+
+
 
         @Override
         public void buttonActionOnClick(String buttonId) {
