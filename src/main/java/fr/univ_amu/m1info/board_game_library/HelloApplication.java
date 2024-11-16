@@ -5,14 +5,22 @@ import fr.univ_amu.m1info.board_game_library.graphics.configuration.BoardGameCon
 import fr.univ_amu.m1info.board_game_library.graphics.configuration.LabeledElementConfiguration;
 import fr.univ_amu.m1info.board_game_library.graphics.configuration.LabeledElementKind;
 import fr.univ_amu.m1info.board_game_library.graphics.configuration.BoardGameDimensions;
+import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardActionOnHover;
+import fr.univ_amu.m1info.board_game_library.model.OthelloBoard;
+import fr.univ_amu.m1info.board_game_library.model.OthelloMoveValidator;
+import fr.univ_amu.m1info.board_game_library.model.Piece;
 
 import java.util.List;
 
 public class HelloApplication {
 
-    private static class HelloController implements BoardGameController {
+    private static class HelloController implements BoardGameController, BoardActionOnHover {
         private BoardGameView view;
         private boolean[][] occupiedCells = new boolean[8][8]; // To keep track of occupie
+        private OthelloBoard board;        // Represents the game board
+        private Piece currentPlayer;       // Indicates current player (BLACK or WHITE)
+        private OthelloMoveValidator moveValidator; // Validates moves
+
 
         @Override
         public void initializeViewOnStart(BoardGameView view) {
@@ -80,6 +88,11 @@ public class HelloApplication {
                     view.addShapeAtCell(centerRow, centerCol, Shape.CIRCLE, Color.WHITE);                }
                 default -> throw new IllegalStateException("Unexpected event, button id : " + buttonId);
             }
+        }
+
+        @Override
+        public boolean validateHover(int row, int column) {
+            return moveValidator.isValidMove(board, row, column, currentPlayer);
         }
     }
 
