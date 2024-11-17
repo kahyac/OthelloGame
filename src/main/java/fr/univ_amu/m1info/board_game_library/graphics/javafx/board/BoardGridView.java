@@ -14,6 +14,8 @@ public class BoardGridView extends GridPane {
     private int rowCount;
     private int columnCount;
     private BoardActionOnClick boardActionOnClick;
+    private BoardActionOnHover boardActionOnHover;
+
 
     public BoardGridView() {
     }
@@ -81,11 +83,29 @@ public class BoardGridView extends GridPane {
         }
     }
 
+    public void setHoverAction(BoardActionOnHover boardActionOnHover) {
+        this.boardActionOnHover = boardActionOnHover;
+        setHoverOnSquares();
+    }
+
+    public void setHoverOnSquares() {
+        for (int row = 0; row < rowCount; row++) {
+            for (int column = 0; column < columnCount; column++) {
+                SquareView square = squareViews[row][column];
+                square.setHoverHandler(boardActionOnHover); // Connecte chaque case au gestionnaire
+            }
+        }
+    }
+
+
+
+
     public void addShapeAtSquare(int row, int column, Shape shape, Color color) {
         squareViews[row][column].addShape(shape, color);
     }
 
     public void removeShapesAtSquare(int row, int column) {
-        squareViews[row][column].removeShapes();
+        squareViews[row][column].removeShapes(); // Appelle la méthode de la cellule spécifique
     }
+
 }

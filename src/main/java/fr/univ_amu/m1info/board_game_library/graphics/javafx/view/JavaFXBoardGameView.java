@@ -82,5 +82,10 @@ public class JavaFXBoardGameView implements BoardGameControllableView {
         controller.boardActionOnClick(row, column);
     }
 
+    public void removeShapesAtCell(int row, int column) {
+        boardGridView.removeShapesAtSquare(row, column);
+    }
+
+
 
 }

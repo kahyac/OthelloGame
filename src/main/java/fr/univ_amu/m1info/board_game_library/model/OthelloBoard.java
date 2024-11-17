@@ -10,7 +10,14 @@ public class OthelloBoard {
     }
 
     private void initializeBoard() {
-        // Place initial pieces in the center of the board
+        // Initialise toutes les cases comme vides
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                board[row][col] = Piece.EMPTY;
+            }
+        }
+
+        // Place les 4 pions centraux
         board[3][3] = Piece.WHITE;
         board[3][4] = Piece.BLACK;
         board[4][3] = Piece.BLACK;
@@ -29,3 +36,4 @@ public class OthelloBoard {
         return size;
     }
 }
+
