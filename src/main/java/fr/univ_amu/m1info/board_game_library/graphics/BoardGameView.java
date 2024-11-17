@@ -33,6 +33,8 @@ public interface BoardGameView {
      */
     void addShapeAtCell(int row, int column, Shape shape, Color color);
 
+    void removeShapesAtCell(int row, int col);
+
     /**
      * Removes all shapes from a specific cell on the game board.
      *

@@ -14,6 +14,9 @@ public class SquareView extends StackPane {
     private final Group shapes = new Group();
     private final int squareSize;
 
+    private Color originalColor; // Save original color
+    private BoardActionOnHover hoverHandler; // reference to validate Hover
+
 
     public SquareView(int column, int row, int squareSize) {
         this.column = column;
@@ -26,10 +29,34 @@ public class SquareView extends StackPane {
         this.getChildren().add(shapes);
         squareBackground.setStroke(Color.BLACK);
         setColor(Color.WHITE);
+        // Save current color as default
+        originalColor = Color.WHITE;
+
+        // Define hover events
+        setOnMouseEntered(e -> handleMouseEnter());
+        setOnMouseExited(e -> handleMouseExit());
     }
+
+
+    public void handleMouseEnter() {
+        if (hoverHandler != null && hoverHandler.validateHover(row, column)) {
+            squareBackground.setFill(Color.RED); // Indiquer que la case est valide
+        }
+    }
+
+    public void handleMouseExit() {
+        squareBackground.setFill(originalColor); // Restaurer la couleur d'origine
+    }
+
+
+    public void setHoverHandler(BoardActionOnHover hoverHandler) {
+        this.hoverHandler = hoverHandler;
+    }
+
 
     public void setColor(Color backgroundColor) {
         squareBackground.setFill(backgroundColor);
+        originalColor = backgroundColor; // Mettre à jour la couleur d'origine
     }
 
     public void setAction(BoardActionOnClick positionHandler) {
@@ -43,6 +70,7 @@ public class SquareView extends StackPane {
     }
 
     public void removeShapes() {
-        shapes.getChildren().clear();
+        shapes.getChildren().clear(); // Supprime tous les éléments graphiques de cette case
     }
+
 }

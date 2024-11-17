@@ -1,52 +1,171 @@
 package fr.univ_amu.m1info.board_game_library;
 
 import fr.univ_amu.m1info.board_game_library.graphics.*;
-import fr.univ_amu.m1info.board_game_library.graphics.configuration.BoardGameConfiguration;
-import fr.univ_amu.m1info.board_game_library.graphics.configuration.LabeledElementConfiguration;
-import fr.univ_amu.m1info.board_game_library.graphics.configuration.LabeledElementKind;
-import fr.univ_amu.m1info.board_game_library.graphics.configuration.BoardGameDimensions;
-
+import fr.univ_amu.m1info.board_game_library.graphics.configuration.*;
+import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardActionOnHover;
+import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardGridView;
+import fr.univ_amu.m1info.board_game_library.graphics.javafx.view.JavaFXBoardGameView;
+import fr.univ_amu.m1info.board_game_library.model.*;
 import java.util.List;
 
 public class HelloApplication {
 
-    private static class HelloController implements BoardGameController {
+    private static class HelloController implements BoardGameController, BoardActionOnHover {
         private BoardGameView view;
-        private boolean[][] occupiedCells = new boolean[8][8]; // To keep track of occupie
+        private OthelloBoard board;        // Represents the game board
+        private Piece currentPlayer;       // Indicates current player (BLACK or WHITE)
+        private OthelloMoveValidator moveValidator; // Validates moves
+        private PieceFlipper pieceFlipper; // To return captured opponent pieces
+
 
         @Override
         public void initializeViewOnStart(BoardGameView view) {
-            changeCellColors(view, Color.GREEN, Color.GREEN);
-
             this.view = view;
-            int centerRow = 4; // Le plateau 8x8 a ses cases centrales autour des index 3 et 4 (indices commençant à 0)
-            int centerCol = 4;
+            this.board = new OthelloBoard();
+            this.currentPlayer = Piece.BLACK;
+            this.moveValidator = new OthelloMoveValidator();
+            this.pieceFlipper = new PieceFlipper();
 
-            // Place the initial Othello pieces and mark cells as occupied
-            view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE);
-            occupiedCells[centerRow - 1][centerCol - 1] = true;
+            // Afficher les couleurs initiales
+            initializeBoardColors();
 
-            view.addShapeAtCell(centerRow - 1, centerCol, Shape.CIRCLE, Color.BLACK);
-            occupiedCells[centerRow - 1][centerCol] = true;
+            // Placer les pions de départ
+            initializeStartingBoard();
 
-            view.addShapeAtCell(centerRow, centerCol - 1, Shape.CIRCLE, Color.BLACK);
-            occupiedCells[centerRow][centerCol - 1] = true;
+            // Log de l'état initial du plateau
+            printBoardState();
 
-            view.addShapeAtCell(centerRow, centerCol, Shape.CIRCLE, Color.WHITE);
-            occupiedCells[centerRow][centerCol] = true;
+            // Afficher les coups valides
+            highlightValidMoves();
+
+            // Configurer les clics sur le plateau
+            BoardGridView gridView = ((JavaFXBoardGameView) view).getBoardGridView();
+            gridView.setAction(this::boardActionOnClick);
         }
+
+        private void printBoardState() {
+            System.out.println("État initial du plateau :");
+            for (int row = 0; row < board.getSize(); row++) {
+                for (int col = 0; col < board.getSize(); col++) {
+                    System.out.print(board.getPieceAt(row, col) + " ");
+                }
+                System.out.println();
+            }
+        }
+
+
+
+        private void initializeBoardColors() {
+            for (int row = 0; row < board.getSize(); row++) {
+                for (int col = 0; col < board.getSize(); col++) {
+                    view.setCellColor(row, col, Color.GREEN); // Vert comme couleur de fond
+                }
+            }
+        }
+
+
+
+        private void initializeStartingBoard() {
+            // Placer les pions de départ
+            view.addShapeAtCell(3, 3, Shape.CIRCLE, Color.WHITE);
+            board.placePiece(3, 3, Piece.WHITE);
+
+            view.addShapeAtCell(3, 4, Shape.CIRCLE, Color.BLACK);
+            board.placePiece(3, 4, Piece.BLACK);
+
+            view.addShapeAtCell(4, 3, Shape.CIRCLE, Color.BLACK);
+            board.placePiece(4, 3, Piece.BLACK);
+
+            view.addShapeAtCell(4, 4, Shape.CIRCLE, Color.WHITE);
+            board.placePiece(4, 4, Piece.WHITE);
+
+            // Mettre à jour les couleurs des cases
+            highlightValidMoves();
+        }
+
 
 
         @Override
         public void boardActionOnClick(int row, int column) {
-            // Only add a shape if the cell is empty
-            if (!occupiedCells[row][column]) {
-                view.addShapeAtCell(row, column, Shape.CIRCLE, Color.BLACK);
-                occupiedCells[row][column] = true; // Mark the cell as occupied
+            // Vérifie si la case est vide
+            if (board.getPieceAt(row, column) != Piece.EMPTY) {
+                System.out.println("La case est déjà occupée !");
+                return;
+            }
+
+            // Vérifie si le coup est valide
+            if (moveValidator.isValidMove(board, row, column, currentPlayer)) {
+                // Place le pion sur la case cliquée (logique et graphique)
+                board.placePiece(row, column, currentPlayer);
+                view.addShapeAtCell(row, column, Shape.CIRCLE,
+                        currentPlayer == Piece.BLACK ? Color.BLACK : Color.WHITE);
+
+                // Retourne les pions adverses
+                pieceFlipper.flipPieces(board, row, column, currentPlayer);
+
+                // Mets à jour l'affichage graphique des pions retournés
+                updateViewFromBoard();
+
+                // Basculer le joueur
+                togglePlayer();
+
+                // Met à jour les coups valides pour le prochain joueur
+                highlightValidMoves();
             } else {
-                System.out.println("Cell [" + row + "][" + column + "] is already occupied!");
+                System.out.println("Coup invalide !");
             }
         }
+
+
+        private void updateViewFromBoard() {
+            for (int row = 0; row < board.getSize(); row++) {
+                for (int col = 0; col < board.getSize(); col++) {
+                    Piece piece = board.getPieceAt(row, col);
+                    if (piece == Piece.BLACK) {
+                        view.addShapeAtCell(row, col, Shape.CIRCLE, Color.BLACK);
+                    } else if (piece == Piece.WHITE) {
+                        view.addShapeAtCell(row, col, Shape.CIRCLE, Color.WHITE);
+                    } else {
+                        view.removeShapesAtCell(row, col); // Supprime les pions si la case est vide
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+        private void togglePlayer() {
+            currentPlayer = (currentPlayer == Piece.BLACK) ? Piece.WHITE : Piece.BLACK;
+        }
+
+        private void highlightValidMoves() {
+            System.out.println("Highlighting valid moves for " + currentPlayer);
+            for (int row = 0; row < board.getSize(); row++) {
+                for (int col = 0; col < board.getSize(); col++) {
+                    if (board.getPieceAt(row, col) == Piece.EMPTY
+                            && moveValidator.isValidMove(board, row, col, currentPlayer)) {
+                        view.setCellColor(row, col, Color.RED); // Rouge pour les coups valides
+                        System.out.println("Case valide : (" + row + ", " + col + ")");
+                    } else {
+                        view.setCellColor(row, col, Color.GREEN); // Vert sinon
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
 
         @Override
         public void buttonActionOnClick(String buttonId) {
@@ -81,6 +200,15 @@ public class HelloApplication {
                 default -> throw new IllegalStateException("Unexpected event, button id : " + buttonId);
             }
         }
+
+        @Override
+        public boolean validateHover(int row, int column) {
+            return board.getPieceAt(row, column) == Piece.EMPTY
+                    && moveValidator.isValidMove(board, row, column, currentPlayer);
+        }
+
+
+
     }
 
     public static void main(String[] args) {
