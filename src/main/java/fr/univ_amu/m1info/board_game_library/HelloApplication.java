@@ -6,7 +6,10 @@ import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardActionOn
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardGridView;
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.view.JavaFXBoardGameView;
 import fr.univ_amu.m1info.board_game_library.model.*;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class HelloApplication {
 
@@ -38,15 +41,24 @@ public class HelloApplication {
             this.currentPlayer = Piece.BLACK; // Toujours l'humain qui commence
             this.moveValidator = new OthelloMoveValidator(); // Réinitialise le validateur
             this.pieceFlipper = new PieceFlipper(); // Réinitialise le flipper
-
+            resetView();
             initializeBoardColors(); // Configure les couleurs de la grille
             initializeStartingBoard(); // Place les pions de départ
 
             highlightValidMoves(); // Affiche les coups valides pour le joueur actuel
         }
 
+        private void resetView() {
+            // Efface tous les pions de la vue
+            for (int row = 0; row < board.getSize(); row++) {
+                for (int col = 0; col < board.getSize(); col++) {
+                    view.removeShapesAtCell(row, col); // Supprime les formes graphiques
+                }
+            }
 
-
+            // Réinitialise les étiquettes ou autres éléments de l'interface si nécessaire
+            view.updateLabeledElement("Initial Text", "Nouvelle partie démarrée !");
+        }
 
         private void initializeBoardColors() {
             for (int row = 0; row < board.getSize(); row++) {
@@ -55,7 +67,6 @@ public class HelloApplication {
                 }
             }
         }
-
 
 
         private void initializeStartingBoard() {
@@ -80,13 +91,13 @@ public class HelloApplication {
 
         @Override
         public void boardActionOnClick(int row, int column) {
-            // Checks if the box is empty
+            // Vérifie si la case est vide
             if (board.getPieceAt(row, column) != Piece.EMPTY) {
                 System.out.println("La case est déjà occupée !");
                 return;
             }
 
-            // Vérifie si le coup est valide
+            // Vérifie si le coup est valide pour le joueur actuel
             if (moveValidator.isValidMove(board, row, column, currentPlayer)) {
                 // Place le pion sur la case cliquée (logique et graphique)
                 board.placePiece(row, column, currentPlayer);
@@ -103,10 +114,64 @@ public class HelloApplication {
 
                 // Met à jour les coups valides pour le prochain joueur
                 highlightValidMoves();
+
+                // Si c'est le mode IA et que c'est maintenant au tour de l'IA
+                if (playAgainstAI && currentPlayer == Piece.WHITE) {
+                    playAIMove(); // L'IA joue automatiquement
+                }
             } else {
                 System.out.println("Coup invalide !");
             }
         }
+
+
+        private List<int[]> getValidMoves(Piece currentPlayer) {
+            List<int[]> validMoves = new ArrayList<>();
+            for (int row = 0; row < board.getSize(); row++) {
+                for (int col = 0; col < board.getSize(); col++) {
+                    // Vérifie si la case est vide et si le coup est valide pour le joueur
+                    if (board.getPieceAt(row, col) == Piece.EMPTY && moveValidator.isValidMove(board, row, col, currentPlayer)) {
+                        validMoves.add(new int[]{row, col}); // Ajoute la position (row, col) à la liste
+                    }
+                }
+            }
+            return validMoves;
+        }
+
+
+        private void playAIMove() {
+            System.out.println("L'IA joue...");
+            List<int[]> validMoves = getValidMoves(currentPlayer);
+
+            if (!validMoves.isEmpty()) {
+                // Choisit un coup valide aléatoire
+                Random random = new Random();
+                int[] move = validMoves.get(random.nextInt(validMoves.size()));
+
+                // Place le pion
+                board.placePiece(move[0], move[1], currentPlayer);
+                view.addShapeAtCell(move[0], move[1], Shape.CIRCLE, Color.WHITE); // Couleur de l'IA (Blanc)
+
+                // Retourne les pions capturés
+                pieceFlipper.flipPieces(board, move[0], move[1], currentPlayer);
+
+                // Mets à jour la vue
+                updateViewFromBoard();
+
+                // Bascule au joueur humain
+                togglePlayer();
+
+                // Met en évidence les coups valides pour le joueur humain
+                highlightValidMoves();
+            } else {
+                System.out.println("L'IA n'a pas de coups valides.");
+                togglePlayer(); // Passe au joueur humain si l'IA n'a pas de coup valide
+            }
+        }
+
+
+
+
 
 
         private void updateViewFromBoard() {
@@ -123,14 +188,6 @@ public class HelloApplication {
                 }
             }
         }
-
-
-
-
-
-
-
-
 
         private void togglePlayer() {
             currentPlayer = (currentPlayer == Piece.BLACK) ? Piece.WHITE : Piece.BLACK;
@@ -151,46 +208,53 @@ public class HelloApplication {
             }
         }
 
-
-
-
-
-
-
-
         @Override
         public void buttonActionOnClick(String buttonId) {
             switch (buttonId) {
-                case "ButtonChangeLabel" -> {
-                    view.updateLabeledElement("SampleLabel", "Updated Text");
-                    view.updateLabeledElement("ButtonChangeLabel", "Updated Text");
-                }
-                case "ButtonStarSquare" -> {
-                    changeCellColors(view, Color.GREEN, Color.GREEN);
-                    this.view = view;
-                    int centerRow = 4; // Le plateau 8x8 a ses cases centrales autour des index 3 et 4 (indices commençant à 0)
-                    int centerCol = 4;
-
-                    // Placer les pions au centre du plateau selon les règles d'Othello
-                    view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE);  // Cellule [3][3] - Blanc
-                    view.addShapeAtCell(centerRow - 1, centerCol, Shape.CIRCLE, Color.BLACK);      // Cellule [3][4] - Noir
-                    view.addShapeAtCell(centerRow, centerCol - 1, Shape.CIRCLE, Color.BLACK);      // Cellule [4][3] - Noir
-                    view.addShapeAtCell(centerRow, centerCol, Shape.CIRCLE, Color.WHITE);                }
-                case "ButtonDiamondCircle" -> {
-                    changeCellColors(view, Color.GREEN, Color.GREEN);
-
-                    this.view = view;
-                    int centerRow = 4; // Le plateau 8x8 a ses cases centrales autour des index 3 et 4 (indices commençant à 0)
-                    int centerCol = 4;
-
-                    // Placer les pions au centre du plateau selon les règles d'Othello
-                    view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE);  // Cellule [3][3] - Blanc
-                    view.addShapeAtCell(centerRow - 1, centerCol, Shape.CIRCLE, Color.BLACK);      // Cellule [3][4] - Noir
-                    view.addShapeAtCell(centerRow, centerCol - 1, Shape.CIRCLE, Color.BLACK);      // Cellule [4][3] - Noir
-                    view.addShapeAtCell(centerRow, centerCol, Shape.CIRCLE, Color.WHITE);                }
-                default -> throw new IllegalStateException("Unexpected event, button id : " + buttonId);
+                case "ButtonChangeLabel" -> handleChangeLabelButton();
+                case "ButtonStarSquare" -> handleStarSquareButton();
+                case "ButtonDiamondCircle" -> handleDiamondCircleButton();
+                case "ButtonToggleModeIA" -> handleToggleModeIAButton(); // Nouveau bouton IA
+                default -> throw new IllegalStateException("Unexpected button ID: " + buttonId);
             }
         }
+
+        private void handleChangeLabelButton() {
+            view.updateLabeledElement("SampleLabel", "Updated Text");
+            view.updateLabeledElement("ButtonChangeLabel", "Updated Text");
+        }
+
+        private void placeInitialPieces() {
+            int centerRow = 4; // Index des cellules centrales
+            int centerCol = 4;
+
+            view.addShapeAtCell(centerRow - 1, centerCol - 1, Shape.CIRCLE, Color.WHITE); // [3][3] - Blanc
+            view.addShapeAtCell(centerRow - 1, centerCol, Shape.CIRCLE, Color.BLACK);     // [3][4] - Noir
+            view.addShapeAtCell(centerRow, centerCol - 1, Shape.CIRCLE, Color.BLACK);     // [4][3] - Noir
+            view.addShapeAtCell(centerRow, centerCol, Shape.CIRCLE, Color.WHITE);         // [4][4] - Blanc
+        }
+
+        private void handleStarSquareButton() {
+            changeCellColors(view, Color.GREEN, Color.GREEN);
+            placeInitialPieces(); // Utilise une méthode commune pour placer les pions initiaux
+        }
+
+        private void handleDiamondCircleButton() {
+            changeCellColors(view, Color.GREEN, Color.GREEN);
+            placeInitialPieces();
+        }
+
+        private void handleToggleModeIAButton() {
+            playAgainstAI = !playAgainstAI; // Alterne le mode
+            System.out.println("Mode de jeu basculé : " + (playAgainstAI ? "Humain vs IA" : "Humain vs Humain"));
+
+            // Met à jour l'interface utilisateur
+            view.updateLabeledElement("Initial Text", playAgainstAI ? "Mode: Humain vs IA activé" : "Mode: Humain vs Humain activé");
+
+            // Redémarre la partie avec le nouveau mode
+            startNewGame(true);
+        }
+
 
         @Override
         public boolean validateHover(int row, int column) {
