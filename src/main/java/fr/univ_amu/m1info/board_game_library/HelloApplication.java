@@ -201,8 +201,14 @@ public class HelloApplication {
             }
         }
 
+        private void updateTurnIndicator() {
+            String playerColor = (currentPlayer == Piece.BLACK) ? "Noir" : "Blanc";
+            view.updateLabeledElement("TurnIndicator", "C'est au tour de : " + playerColor);
+        }
+
         private void togglePlayer() {
             currentPlayer = (currentPlayer == Piece.BLACK) ? Piece.WHITE : Piece.BLACK;
+            updateTurnIndicator();
         }
 
         private void highlightValidMoves() {
@@ -226,10 +232,11 @@ public class HelloApplication {
                 case "ButtonChangeLabel" -> handleChangeLabelButton();
                 case "ButtonStarSquare" -> handleStarSquareButton();
                 case "ButtonDiamondCircle" -> handleDiamondCircleButton();
-                case "ButtonToggleModeIA" -> handleToggleModeIAButton(); // Nouveau bouton IA
+                case "ButtonToggleModeIA" -> handleToggleModeIAButton();
                 default -> throw new IllegalStateException("Unexpected button ID: " + buttonId);
             }
         }
+
 
         private void handleChangeLabelButton() {
             view.updateLabeledElement("SampleLabel", "Updated Text");
@@ -287,7 +294,8 @@ public class HelloApplication {
                         new LabeledElementConfiguration("Add squares and stars", "ButtonStarSquare", LabeledElementKind.BUTTON),
                         new LabeledElementConfiguration("Add diamonds and circles", "ButtonDiamondCircle", LabeledElementKind.BUTTON),
                         new LabeledElementConfiguration("IA", "ButtonToggleModeIA", LabeledElementKind.BUTTON), // Nouveau bouton
-                        new LabeledElementConfiguration("Initial Text", "Initial Text", LabeledElementKind.TEXT)
+                        new LabeledElementConfiguration("Initial Text", "Initial Text", LabeledElementKind.TEXT),
+                        new LabeledElementConfiguration("C'est au tour de : Noir", "TurnIndicator", LabeledElementKind.TEXT)
                 ));
         BoardGameController controller = new HelloController();
         BoardGameApplicationLauncher launcher = JavaFXBoardGameApplicationLauncher.getInstance();
