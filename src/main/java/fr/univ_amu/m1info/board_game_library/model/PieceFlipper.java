@@ -4,7 +4,7 @@ public class PieceFlipper {
 
     public void flipPieces(OthelloBoard board, int row, int col, Piece currentPlayer) {
         int[][] directions = {
-                {-1, 0}, {1, 0}, {0, -1}, {0, 1},       // Haut, bas, gauche, droite
+                {-1, 0}, {1, 0}, {0, -1}, {0, 1},       // gauche, haut, bas, droite
                 {-1, -1}, {-1, 1}, {1, -1}, {1, 1}     // Diagonales
         };
 
