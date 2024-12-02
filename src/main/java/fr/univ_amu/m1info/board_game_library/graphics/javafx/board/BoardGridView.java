@@ -9,6 +9,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
 public class BoardGridView extends GridPane {
+
+
     private final static int BASE_SQUARE_SIZE = 65;
     private SquareView[][] squareViews;
     private int rowCount;
