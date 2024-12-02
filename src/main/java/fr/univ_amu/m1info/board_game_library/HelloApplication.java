@@ -16,43 +16,35 @@ public class HelloApplication {
         private Piece currentPlayer;       // Indicates current player (BLACK or WHITE)
         private OthelloMoveValidator moveValidator; // Validates moves
         private PieceFlipper pieceFlipper; // To return captured opponent pieces
-        private boolean playAgainstAI = false; //Check if we are playing with AI
+        private boolean playAgainstAI = false; //Checks if we are playing with AI
 
 
         @Override
         public void initializeViewOnStart(BoardGameView view) {
-            this.view = view;
-            this.board = new OthelloBoard();
-            this.currentPlayer = Piece.BLACK;
-            this.moveValidator = new OthelloMoveValidator();
-            this.pieceFlipper = new PieceFlipper();
+            this.view = view; // Référence à la vue
 
-            // Afficher les couleurs initiales
-            initializeBoardColors();
-
-            // Placer les pions de départ
-            initializeStartingBoard();
-
-            // Log de l'état initial du plateau
-            printBoardState();
-
-            // Afficher les coups valides
-            highlightValidMoves();
+            // Appeler la méthode pour démarrer une nouvelle partie
+            startNewGame(false); // Par défaut, mode Humain vs Humain
 
             // Configurer les clics sur le plateau
             BoardGridView gridView = ((JavaFXBoardGameView) view).getBoardGridView();
-            gridView.setAction(this::boardActionOnClick);
+            gridView.setAction(this::boardActionOnClick); // Associer l'action de clic
         }
 
-        private void printBoardState() {
-            System.out.println("État initial du plateau :");
-            for (int row = 0; row < board.getSize(); row++) {
-                for (int col = 0; col < board.getSize(); col++) {
-                    System.out.print(board.getPieceAt(row, col) + " ");
-                }
-                System.out.println();
-            }
+
+        private void startNewGame(boolean playAgainstAI) {
+            this.playAgainstAI = playAgainstAI; // Définit le mode (IA ou non)
+            this.board = new OthelloBoard(); // Réinitialise le plateau
+            this.currentPlayer = Piece.BLACK; // Toujours l'humain qui commence
+            this.moveValidator = new OthelloMoveValidator(); // Réinitialise le validateur
+            this.pieceFlipper = new PieceFlipper(); // Réinitialise le flipper
+
+            initializeBoardColors(); // Configure les couleurs de la grille
+            initializeStartingBoard(); // Place les pions de départ
+
+            highlightValidMoves(); // Affiche les coups valides pour le joueur actuel
         }
+
 
 
 
@@ -98,8 +90,7 @@ public class HelloApplication {
             if (moveValidator.isValidMove(board, row, column, currentPlayer)) {
                 // Place le pion sur la case cliquée (logique et graphique)
                 board.placePiece(row, column, currentPlayer);
-                view.addShapeAtCell(row, column, Shape.CIRCLE,
-                        currentPlayer == Piece.BLACK ? Color.BLACK : Color.WHITE);
+                view.addShapeAtCell(row, column, Shape.CIRCLE, currentPlayer == Piece.BLACK ? Color.BLACK : Color.WHITE);
 
                 // Retourne les pions adverses
                 pieceFlipper.flipPieces(board, row, column, currentPlayer);
@@ -205,19 +196,6 @@ public class HelloApplication {
         public boolean validateHover(int row, int column) {
             return board.getPieceAt(row, column) == Piece.EMPTY
                     && moveValidator.isValidMove(board, row, column, currentPlayer);
-        }
-
-        private void startNewGame(boolean playAgainstAI) {
-            this.playAgainstAI = playAgainstAI; // Définit le mode Humain vs IA ou Humain vs Humain
-            this.board = new OthelloBoard();
-            this.currentPlayer = Piece.BLACK; // L'humain commence toujours
-            this.moveValidator = new OthelloMoveValidator();
-            this.pieceFlipper = new PieceFlipper();
-
-            initializeBoardColors(); // Configure la grille avec des couleurs par défaut
-            initializeStartingBoard(); // Place les 4 pions initiaux
-
-            highlightValidMoves(); // Affiche les coups valides pour l'humain
         }
 
 
