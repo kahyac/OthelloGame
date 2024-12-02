@@ -6,6 +6,9 @@ import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardActionOn
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardGridView;
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.view.JavaFXBoardGameView;
 import fr.univ_amu.m1info.board_game_library.model.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,11 +120,20 @@ public class HelloApplication {
 
                 // Si c'est le mode IA et que c'est maintenant au tour de l'IA
                 if (playAgainstAI && currentPlayer == Piece.WHITE) {
-                    playAIMove(); // L'IA joue automatiquement
+                    delayAIMove(); // Introduit un délai avant que l'IA ne joue
                 }
             } else {
                 System.out.println("Coup invalide !");
             }
+        }
+
+        private void delayAIMove() {
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.seconds(1), // Délai de 3 secondes
+                    event -> playAIMove() // Appelle la méthode pour que l'IA joue
+            ));
+            timeline.setCycleCount(1); // Exécute une seule fois
+            timeline.play(); // Démarre le délai
         }
 
 
