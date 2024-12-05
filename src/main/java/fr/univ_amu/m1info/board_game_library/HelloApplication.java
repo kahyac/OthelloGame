@@ -296,7 +296,9 @@ public class HelloApplication {
                         new LabeledElementConfiguration("IA", "ButtonToggleModeIA", LabeledElementKind.BUTTON), // Nouveau bouton
                         new LabeledElementConfiguration("Initial Text", "Initial Text", LabeledElementKind.TEXT),
                         new LabeledElementConfiguration("C'est au tour de : Noir", "TurnIndicator", LabeledElementKind.TEXT),
-                        new LabeledElementConfiguration("Score : Noir 2 - Blanc 2", "ScoreIndicator", LabeledElementKind.TEXT)
+                        new LabeledElementConfiguration("Score : Noir 2 - Blanc 2", "ScoreIndicator", LabeledElementKind.TEXT),
+                        new LabeledElementConfiguration("Annuler", "ButtonUndo", LabeledElementKind.BUTTON),
+                        new LabeledElementConfiguration("Rétablir", "ButtonRedo", LabeledElementKind.BUTTON)
                 ));
         BoardGameController controller = new HelloController();
         BoardGameApplicationLauncher launcher = JavaFXBoardGameApplicationLauncher.getInstance();
