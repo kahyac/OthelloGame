@@ -102,8 +102,14 @@ public class HelloController implements BoardGameController, BoardActionOnHover 
         logic.playMove(row, col, currentPlayer);
         switchPlayer();
         refreshGameState();
-        if (playAgainstAI && currentPlayer == Piece.WHITE) delayAIMove();
+
+        if (isGameOver()) {
+            determineWinner();
+        } else if (playAgainstAI && currentPlayer == Piece.WHITE) {
+            delayAIMove();
+        }
     }
+
 
     private void switchPlayer() {
         currentPlayer = (currentPlayer == Piece.BLACK) ? Piece.WHITE : Piece.BLACK;
@@ -120,8 +126,13 @@ public class HelloController implements BoardGameController, BoardActionOnHover 
             logic.playMove(move[0], move[1], currentPlayer);
             switchPlayer();
             refreshGameState();
+
+            if (isGameOver()) {
+                determineWinner();
+            }
         }
     }
+
 
     @Override
     public void buttonActionOnClick(String buttonId) {
@@ -154,4 +165,26 @@ public class HelloController implements BoardGameController, BoardActionOnHover 
     public boolean validateHover(int row, int col) {
         return logic.isValidMove(row, col, currentPlayer);
     }
+
+    private boolean isGameOver() {
+        // The game is over if neither player can make a valid move.
+        return !logic.canPlayerPlay(Piece.BLACK) && !logic.canPlayerPlay(Piece.WHITE);
+    }
+
+    private void determineWinner() {
+        int blackScore = scoreCalculator.calculateScore(Piece.BLACK);
+        int whiteScore = scoreCalculator.calculateScore(Piece.WHITE);
+
+        String winner;
+        if (blackScore > whiteScore) {
+            winner = "Noir gagne !";
+        } else if (whiteScore > blackScore) {
+            winner = "Blanc gagne !";
+        } else {
+            winner = "Égalité !";
+        }
+
+        view.updateLabeledElement("Initial Text", winner);
+    }
+
 }
