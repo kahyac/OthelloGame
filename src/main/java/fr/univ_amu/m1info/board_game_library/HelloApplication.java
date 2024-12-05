@@ -280,6 +280,12 @@ public class HelloApplication {
             highlightValidMoves(); // Réaffiche les coups valides
         }
 
+        private void saveGameState() {
+            // Sauvegarde l'état actuel du jeu dans la pile
+            undoStack.push(new GameState(board, currentPlayer));
+            redoStack.clear(); // Vide le redoStack lorsque l'état change
+        }
+
 
         private void handleChangeLabelButton() {
             view.updateLabeledElement("SampleLabel", "Updated Text");
