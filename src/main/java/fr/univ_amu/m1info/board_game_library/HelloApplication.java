@@ -13,6 +13,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 public class HelloApplication {
 
@@ -22,7 +23,9 @@ public class HelloApplication {
         private Piece currentPlayer;       // Indicates current player (BLACK or WHITE)
         private OthelloMoveValidator moveValidator; // Validates moves
         private PieceFlipper pieceFlipper; // To return captured opponent pieces
-        private boolean playAgainstAI = false; //Checks if we are playing with AI
+        private boolean playAgainstAI = false;//Checks if we are playing with AI
+        private Stack<GameState> undoStack = new Stack<>();
+        private  Stack<GameState> redoStack = new Stack<>();
 
 
         @Override
@@ -102,6 +105,7 @@ public class HelloApplication {
 
             // Vérifie si le coup est valide pour le joueur actuel
             if (moveValidator.isValidMove(board, row, column, currentPlayer)) {
+                saveGameState();
                 // Place le pion sur la case cliquée (logique et graphique)
                 board.placePiece(row, column, currentPlayer);
                 view.addShapeAtCell(row, column, Shape.CIRCLE, currentPlayer == Piece.BLACK ? Color.BLACK : Color.WHITE);
@@ -153,6 +157,7 @@ public class HelloApplication {
 
         private void playAIMove() {
             System.out.println("L'IA joue...");
+            saveGameState();
             List<int[]> validMoves = getValidMoves(currentPlayer);
 
             if (!validMoves.isEmpty()) {
@@ -233,8 +238,54 @@ public class HelloApplication {
                 case "ButtonStarSquare" -> handleStarSquareButton();
                 case "ButtonDiamondCircle" -> handleDiamondCircleButton();
                 case "ButtonToggleModeIA" -> handleToggleModeIAButton();
+                case "ButtonUndo" -> undo();
+                case "ButtonRedo" -> redo();
                 default -> throw new IllegalStateException("Unexpected button ID: " + buttonId);
             }
+        }
+
+        private void undo() {
+            if (undoStack.isEmpty()) {
+                System.out.println("Impossible d'annuler !");
+                return;
+            }
+
+            // Sauvegarde l'état actuel dans redoStack avant d'annuler
+            redoStack.push(new GameState(board, currentPlayer));
+
+            // Restaure l'état précédent
+            GameState previousState = undoStack.pop();
+            this.board = previousState.getBoardState();
+            this.currentPlayer = previousState.getCurrentPlayer();
+
+            updateViewFromBoard(); // Synchronise la vue avec le plateau
+            highlightValidMoves(); // Réaffiche les coups valides
+        }
+
+
+
+        private void redo() {
+            if (redoStack.isEmpty()) {
+                System.out.println("Impossible de rétablir !");
+                return;
+            }
+
+            // Sauvegarde l'état actuel dans undoStack avant de rétablir
+            undoStack.push(new GameState(board, currentPlayer));
+
+            // Restaure l'état suivant
+            GameState nextState = redoStack.pop();
+            this.board = nextState.getBoardState();
+            this.currentPlayer = nextState.getCurrentPlayer();
+
+            updateViewFromBoard(); // Synchronise la vue avec le plateau
+            highlightValidMoves(); // Réaffiche les coups valides
+        }
+
+        private void saveGameState() {
+            // Sauvegarde l'état actuel du jeu dans la pile
+            undoStack.push(new GameState(board, currentPlayer));
+            redoStack.clear(); // Vide le redoStack lorsque l'état change
         }
 
 
@@ -296,7 +347,9 @@ public class HelloApplication {
                         new LabeledElementConfiguration("IA", "ButtonToggleModeIA", LabeledElementKind.BUTTON), // Nouveau bouton
                         new LabeledElementConfiguration("Initial Text", "Initial Text", LabeledElementKind.TEXT),
                         new LabeledElementConfiguration("C'est au tour de : Noir", "TurnIndicator", LabeledElementKind.TEXT),
-                        new LabeledElementConfiguration("Score : Noir 2 - Blanc 2", "ScoreIndicator", LabeledElementKind.TEXT)
+                        new LabeledElementConfiguration("Score : Noir 2 - Blanc 2", "ScoreIndicator", LabeledElementKind.TEXT),
+                        new LabeledElementConfiguration("Undo", "ButtonUndo", LabeledElementKind.BUTTON),
+                        new LabeledElementConfiguration("Redo", "ButtonRedo", LabeledElementKind.BUTTON)
                 ));
         BoardGameController controller = new HelloController();
         BoardGameApplicationLauncher launcher = JavaFXBoardGameApplicationLauncher.getInstance();

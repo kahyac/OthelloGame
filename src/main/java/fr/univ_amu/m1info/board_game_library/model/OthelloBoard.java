@@ -35,5 +35,15 @@ public class OthelloBoard {
     public int getSize() {
         return size;
     }
+
+    public OthelloBoard clone() {
+        OthelloBoard clonedBoard = new OthelloBoard();
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                clonedBoard.board[row][col] = this.board[row][col]; // Copie chaque case
+            }
+        }
+        return clonedBoard;
+    }
 }
 
