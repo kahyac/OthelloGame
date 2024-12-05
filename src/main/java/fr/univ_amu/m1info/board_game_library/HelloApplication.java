@@ -233,10 +233,14 @@ public class HelloApplication {
                 case "ButtonStarSquare" -> handleStarSquareButton();
                 case "ButtonDiamondCircle" -> handleDiamondCircleButton();
                 case "ButtonToggleModeIA" -> handleToggleModeIAButton();
+                case "ButtonUndo" -> undo();
+                case "ButtonRedo" -> redo();
                 default -> throw new IllegalStateException("Unexpected button ID: " + buttonId);
             }
         }
 
+        private void redo() {}
+        private void undo() {}
 
         private void handleChangeLabelButton() {
             view.updateLabeledElement("SampleLabel", "Updated Text");
