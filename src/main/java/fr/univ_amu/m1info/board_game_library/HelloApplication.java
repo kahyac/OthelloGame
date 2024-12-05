@@ -13,6 +13,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 public class HelloApplication {
 
@@ -22,7 +23,9 @@ public class HelloApplication {
         private Piece currentPlayer;       // Indicates current player (BLACK or WHITE)
         private OthelloMoveValidator moveValidator; // Validates moves
         private PieceFlipper pieceFlipper; // To return captured opponent pieces
-        private boolean playAgainstAI = false; //Checks if we are playing with AI
+        private boolean playAgainstAI = false;//Checks if we are playing with AI
+        private Stack<GameState> undoStack = new Stack<>();
+        private  Stack<GameState> redoStack = new Stack<>();
 
 
         @Override
@@ -239,8 +242,12 @@ public class HelloApplication {
             }
         }
 
+        private void undo() {
+
+        }
+
+
         private void redo() {}
-        private void undo() {}
 
         private void handleChangeLabelButton() {
             view.updateLabeledElement("SampleLabel", "Updated Text");
