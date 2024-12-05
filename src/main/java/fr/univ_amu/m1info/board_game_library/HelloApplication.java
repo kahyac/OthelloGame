@@ -243,11 +243,43 @@ public class HelloApplication {
         }
 
         private void undo() {
+            if (undoStack.isEmpty()) {
+                System.out.println("Impossible d'annuler !");
+                return;
+            }
 
+            // Sauvegarde l'état actuel dans redoStack avant d'annuler
+            redoStack.push(new GameState(board, currentPlayer));
+
+            // Restaure l'état précédent
+            GameState previousState = undoStack.pop();
+            this.board = previousState.getBoardState();
+            this.currentPlayer = previousState.getCurrentPlayer();
+
+            updateViewFromBoard(); // Synchronise la vue avec le plateau
+            highlightValidMoves(); // Réaffiche les coups valides
         }
 
 
-        private void redo() {}
+
+        private void redo() {
+            if (redoStack.isEmpty()) {
+                System.out.println("Impossible de rétablir !");
+                return;
+            }
+
+            // Sauvegarde l'état actuel dans undoStack avant de rétablir
+            undoStack.push(new GameState(board, currentPlayer));
+
+            // Restaure l'état suivant
+            GameState nextState = redoStack.pop();
+            this.board = nextState.getBoardState();
+            this.currentPlayer = nextState.getCurrentPlayer();
+
+            updateViewFromBoard(); // Synchronise la vue avec le plateau
+            highlightValidMoves(); // Réaffiche les coups valides
+        }
+
 
         private void handleChangeLabelButton() {
             view.updateLabeledElement("SampleLabel", "Updated Text");
