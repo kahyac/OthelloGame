@@ -14,6 +14,7 @@ public class GameState {
         return boardState;
     }
 
+
     public Piece getCurrentPlayer() {
         return currentPlayer;
     }
