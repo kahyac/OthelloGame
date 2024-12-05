@@ -105,6 +105,7 @@ public class HelloApplication {
 
             // Vérifie si le coup est valide pour le joueur actuel
             if (moveValidator.isValidMove(board, row, column, currentPlayer)) {
+                saveGameState();
                 // Place le pion sur la case cliquée (logique et graphique)
                 board.placePiece(row, column, currentPlayer);
                 view.addShapeAtCell(row, column, Shape.CIRCLE, currentPlayer == Piece.BLACK ? Color.BLACK : Color.WHITE);
@@ -156,6 +157,7 @@ public class HelloApplication {
 
         private void playAIMove() {
             System.out.println("L'IA joue...");
+            saveGameState();
             List<int[]> validMoves = getValidMoves(currentPlayer);
 
             if (!validMoves.isEmpty()) {
