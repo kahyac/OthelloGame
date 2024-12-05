@@ -45,5 +45,15 @@ public class OthelloBoard {
         }
         return clonedBoard;
     }
+    public boolean isFull() {
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                if (board[row][col] == Piece.EMPTY) {
+                    return false; // If any cell is empty, the board is not full
+                }
+            }
+        }
+        return true; // All cells are occupied
+    }
 }
 
