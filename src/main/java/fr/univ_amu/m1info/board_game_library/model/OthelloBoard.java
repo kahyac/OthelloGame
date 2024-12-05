@@ -9,7 +9,7 @@ public class OthelloBoard {
         initializeBoard();
     }
 
-    private void initializeBoard() {
+    public void initializeBoard() {
         // Initialise toutes les cases comme vides
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
@@ -45,6 +45,19 @@ public class OthelloBoard {
         }
         return clonedBoard;
     }
+
+    public void copyFrom(OthelloBoard otherBoard) {
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                this.board[row][col] = otherBoard.board[row][col]; // Mise à jour des cases
+            }
+        }
+    }
+
+    public boolean isValidPosition(int row, int col) {
+        return row >= 0 && row < size && col >= 0 && col < size;
+    }
+
     public boolean isFull() {
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
