@@ -5,17 +5,17 @@ import fr.univ_amu.m1info.board_game_library.HelloController;
 public class HumanVsIAStrategy implements GameModeStrategy {
 
     @Override
-    public void handleMove(int row, int col, Piece currentPlayer, HelloController controller) {
+    public void handleMove(Position position, Piece currentPlayer, HelloController controller) {
         if (currentPlayer == Piece.BLACK) {
             // Coup du joueur humain
-            if (!controller.getLogic().isValidMove(row, col, currentPlayer)) {
+            if (!controller.getLogic().isValidMove(position.getRow(), position.getCol(), currentPlayer)) {
                 System.out.println("Invalid move!");
                 return;
             }
 
             // Sauvegarde l'état et joue le coup
             controller.saveGameState();
-            controller.getGameMode().playMove(row, col, currentPlayer);
+            controller.getGameMode().playMove(position, currentPlayer);
 
             controller.refreshGameState();
             // Vérifie la fin du jeu
@@ -32,7 +32,7 @@ public class HumanVsIAStrategy implements GameModeStrategy {
             javafx.animation.Timeline delay = new javafx.animation.Timeline(new javafx.animation.KeyFrame(
                     javafx.util.Duration.seconds(1),
                     event -> {
-                        controller.getGameMode().playMove(-1, -1, controller.getCurrentPlayer());
+                        controller.getGameMode().playMove(new Position(-1,-1), controller.getCurrentPlayer());
 
                         if (controller.isGameOver()) {
                             controller.refreshGameState();
@@ -51,4 +51,5 @@ public class HumanVsIAStrategy implements GameModeStrategy {
     }
 
 }
+
 

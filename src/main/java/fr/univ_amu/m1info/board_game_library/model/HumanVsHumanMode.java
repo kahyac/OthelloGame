@@ -8,11 +8,11 @@ public class HumanVsHumanMode extends GameMode {
     }
 
     @Override
-    public void playMove(int row, int col, Piece player) {
-        if (!logic.isValidMove(row, col, player)) {
+    public void playMove(Position position, Piece player) {
+        if (!logic.isValidMove(position.getRow(), position.getCol(), player)) {
             throw new IllegalArgumentException("Invalid move.");
         }
-        logic.flipPieces(row, col, player); // Flip opponent pieces
-        logic.getBoard().placePiece(row, col, player); // Place the player's piece
+        logic.flipPieces(position.getRow(), position.getCol(), player); // Flip opponent pieces
+        logic.getBoard().placePiece(position.getRow(), position.getCol(), player); // Place the player's piece
     }
 }

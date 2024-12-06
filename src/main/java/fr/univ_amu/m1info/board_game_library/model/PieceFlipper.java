@@ -44,4 +44,5 @@ public class PieceFlipper {
             c += colDir;
         }
     }
+
 }

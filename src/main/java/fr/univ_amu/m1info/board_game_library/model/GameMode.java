@@ -16,5 +16,5 @@ public abstract class GameMode {
     }
 
     // Abstract method for executing a move, implemented by specific game modes
-    public abstract void playMove(int row, int col, Piece player);
+    public abstract void playMove(Position position, Piece player);
 }
