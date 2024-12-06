@@ -5,9 +5,11 @@ import java.util.List;
 
 public class OthelloLogic {
     protected final OthelloBoard board;
+    private final PieceFlipper pieceFlipper;
 
     public OthelloLogic(OthelloBoard board) {
         this.board = board;
+        this.pieceFlipper = new PieceFlipper();
     }
 
     public boolean isValidMove(int row, int col, Piece player) {
@@ -18,18 +20,13 @@ public class OthelloLogic {
     }
 
     private boolean hasFlippablePieces(int row, int col, Piece player) {
-        for (int[] direction : DIRECTIONS) {
+        for (int[] direction : PieceFlipper.DIRECTIONS) {
             if (!findFlippablePieces(row, col, player, direction[0], direction[1]).isEmpty()) {
                 return true;
             }
         }
         return false;
     }
-
-    private static final int[][] DIRECTIONS = {
-            {-1, 0}, {1, 0}, {0, -1}, {0, 1},
-            {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
-    };
 
     public List<int[]> findFlippablePieces(int row, int col, Piece player, int dRow, int dCol) {
         List<int[]> flippable = new ArrayList<>();
@@ -50,18 +47,13 @@ public class OthelloLogic {
         return new ArrayList<>();
     }
 
-    public void updateBoardState(OthelloBoard board) {
-        this.board.copyFrom(board);
+    public void playMove(int row, int col, Piece player) {
+        board.placePiece(row, col, player);
+        pieceFlipper.flipPieces(board, row, col, player);
     }
 
-    public void playMove(int row, int col, Piece player) {
-        for (int[] direction : DIRECTIONS) {
-            List<int[]> flippable = findFlippablePieces(row, col, player, direction[0], direction[1]);
-            for (int[] position : flippable) {
-                board.placePiece(position[0], position[1], player);
-            }
-        }
-        board.placePiece(row, col, player);
+    public void updateBoardState(OthelloBoard newBoard) {
+        board.copyFrom(newBoard); // Synchronise l'état actuel avec le nouvel état
     }
 
     public boolean canPlayerPlay(Piece player) {
