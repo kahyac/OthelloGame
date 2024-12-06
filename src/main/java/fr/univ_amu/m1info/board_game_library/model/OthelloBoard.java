@@ -10,14 +10,14 @@ public class OthelloBoard {
     }
 
     public void initializeBoard() {
-        // Initialise toutes les cases comme vides
+        // Initialize every case as empty
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 board[row][col] = Piece.EMPTY;
             }
         }
 
-        // Place les 4 pions centraux
+        // Place the 4 initial pawns
         board[3][3] = Piece.WHITE;
         board[3][4] = Piece.BLACK;
         board[4][3] = Piece.BLACK;
@@ -40,7 +40,7 @@ public class OthelloBoard {
         OthelloBoard clonedBoard = new OthelloBoard();
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                clonedBoard.board[row][col] = this.board[row][col]; // Copie chaque case
+                clonedBoard.board[row][col] = this.board[row][col]; // copy every case
             }
         }
         return clonedBoard;
@@ -49,7 +49,7 @@ public class OthelloBoard {
     public void copyFrom(OthelloBoard otherBoard) {
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                this.board[row][col] = otherBoard.board[row][col]; // Mise à jour des cases
+                this.board[row][col] = otherBoard.board[row][col]; // Cases update
             }
         }
     }

@@ -12,9 +12,9 @@ public class GameStateManager {
     }
 
     public void saveState(Piece currentPlayer) {
-        // Sauvegarde l'état actuel dans la pile d'annulation
+        // Saves the current state in the undo stack
         undoStack.push(new GameState(board.clone(), currentPlayer));
-        // Vide la pile de rétablissement car un nouvel état a été ajouté
+        // Empties the recovery stack because a new state has been added
         redoStack.clear();
     }
 
@@ -23,9 +23,9 @@ public class GameStateManager {
             System.out.println("Undo: No states to undo.");
             return null;
         }
-        // Sauvegarde l'état actuel avant d'annuler
+        // Save current state before cancelling
         redoStack.push(new GameState(board.clone(), currentPlayer));
-        // Restaure l'état précédent
+        // Restores previous state
         return undoStack.pop();
     }
 
@@ -34,9 +34,9 @@ public class GameStateManager {
             System.out.println("Redo: No states to redo.");
             return null;
         }
-        // Sauvegarde l'état actuel avant de rétablir
+        // Save current state before restoring
         undoStack.push(new GameState(board.clone(), currentPlayer));
-        // Restaure l'état suivant
+        // Restores next state
         return redoStack.pop();
     }
 }

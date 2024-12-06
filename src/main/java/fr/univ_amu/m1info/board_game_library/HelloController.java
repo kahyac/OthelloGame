@@ -3,65 +3,142 @@ package fr.univ_amu.m1info.board_game_library;
 import fr.univ_amu.m1info.board_game_library.graphics.*;
 import fr.univ_amu.m1info.board_game_library.graphics.javafx.board.BoardActionOnHover;
 import fr.univ_amu.m1info.board_game_library.model.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
 
 public class HelloController implements BoardGameController, BoardActionOnHover {
-    private final OthelloBoard board = new OthelloBoard();
-    private final OthelloLogic logic = new OthelloLogic(board);
-    private final GameStateManager stateManager = new GameStateManager(board);
-    private final ScoreCalculator scoreCalculator = new ScoreCalculator(board);
-    private final AIOthelloLogic aiLogic = new AIOthelloLogic(board);
+    private GameMode currentMode;
+    private GameStateManager gameStateManager;
     private BoardGameView view;
     private Piece currentPlayer = Piece.BLACK;
-    private boolean playAgainstAI = false;
+    private GameModeStrategy gameModeStrategy;
+
 
     @Override
     public void initializeViewOnStart(BoardGameView view) {
         this.view = view;
-        startNewGame(false);
-        updateInitialText("Mode : Humain vs Humain activé");
+        startNewGame(false); // Start with default mode (Human vs Human)
     }
 
+    /**
+     * Initializes a new game with the specified mode (Human vs Human or Human vs AI).
+     */
     public void startNewGame(boolean againstAI) {
-        playAgainstAI = againstAI;
-        board.initializeBoard();
+        OthelloBoard board = new OthelloBoard();
+        OthelloLogic logic = new OthelloLogic(board);
+
+        if (againstAI) {
+            currentMode = new HumanVsAIMode(logic);
+            setGameModeStrategy(new HumanVsIAStrategy()); // Définit la stratégie IA
+        } else {
+            currentMode = new HumanVsHumanMode(logic);
+            setGameModeStrategy(new HumanVsHumanStrategy()); // Définit la stratégie Humain vs Humain
+        }
+
+        gameStateManager = new GameStateManager(board);
         currentPlayer = Piece.BLACK;
-        resetView();
         refreshGameState();
-        updateInitialText(playAgainstAI ? "Mode : Humain vs IA activé" : "Mode : Humain vs Humain activé");
+        updateInitialText(againstAI ? "Mode : Humain vs IA activé" : "Mode : Humain vs Humain activé");
     }
 
-    private void resetView() {
-        for (int row = 0; row < board.getSize(); row++)
-            for (int col = 0; col < board.getSize(); col++)
-                view.removeShapesAtCell(row, col);
+    public void setGameModeStrategy(GameModeStrategy gameModeStrategy) {
+        this.gameModeStrategy = gameModeStrategy;
     }
 
-    private void refreshGameState() {
-        initializeBoardColors();
+    /**
+     * Handles board cell clicks by the user.
+     */
+    @Override
+    public void boardActionOnClick(int row, int col) {
+        if (gameModeStrategy == null) {
+            throw new IllegalStateException("GameModeStrategy is not set.");
+        }
+
+        // Délègue la gestion du coup à la stratégie actuelle
+        gameModeStrategy.handleMove(row, col, currentPlayer, this);
+    }
+
+    /**
+     * Handles button clicks for various actions like toggling game mode, undo, and redo.
+     */
+    @Override
+    public void buttonActionOnClick(String buttonId) {
+        switch (buttonId) {
+            case "ButtonToggleTwoPlayers" -> toggleGameMode(false);
+            case "ButtonToggleModeIA" -> toggleGameMode(true);
+            case "ButtonUndo" -> undoMove();
+            case "ButtonRedo" -> redoMove();
+            default -> System.out.println("Unknown button action: " + buttonId);
+        }
+    }
+
+    /**
+     * Toggles the game mode between Human vs Human and Human vs AI.
+     */
+    private void toggleGameMode(boolean againstAI) {
+        startNewGame(againstAI);
+        updateInitialText(againstAI ? "Mode : Humain vs IA activé" : "Mode : Humain vs Humain activé");
+    }
+
+    /**
+     * Handles undoing the last move.
+     */
+    private void undoMove() {
+        GameState previousState = gameStateManager.undo(currentPlayer);
+        if (previousState != null) {
+            restoreGameState(previousState);
+        }
+    }
+
+    /**
+     * Handles redoing the last undone move.
+     */
+    private void redoMove() {
+        GameState nextState = gameStateManager.redo(currentPlayer);
+        if (nextState != null) {
+            restoreGameState(nextState);
+        }
+    }
+
+    /**
+     * Restores the game state from a saved state.
+     */
+    private void restoreGameState(GameState state) {
+        currentMode.getLogic().updateBoardState(state.boardState());
+        currentPlayer = state.currentPlayer();
+        refreshGameState();
+    }
+
+    /**
+     * Switches the current player.
+     */
+    public void switchPlayer() {
+        currentPlayer = (currentPlayer == Piece.BLACK) ? Piece.WHITE : Piece.BLACK;
+    }
+
+    /**
+     * Refreshes the game display and updates indicators.
+     */
+    public void refreshGameState() {
         updateViewFromBoard();
         highlightValidMoves();
         updateScoreIndicator();
         updateTurnIndicator();
     }
 
-    private void initializeBoardColors() {
-        for (int row = 0; row < board.getSize(); row++)
-            for (int col = 0; col < board.getSize(); col++)
-                view.setCellColor(row, col, Color.GREEN);
-    }
-
+    /**
+     * Updates the board view with the current state of the game.
+     */
     private void updateViewFromBoard() {
+        OthelloBoard board = currentMode.getLogic().getBoard();
         for (int row = 0; row < board.getSize(); row++) {
             for (int col = 0; col < board.getSize(); col++) {
-                Piece piece = board.getPieceAt(row, col);
-                updateCellShape(row, col, piece);
+                updateCellShape(row, col, board.getPieceAt(row, col));
             }
         }
     }
 
+    /**
+     * Updates the shape in a specific board cell.
+     */
     private void updateCellShape(int row, int col, Piece piece) {
         if (piece == Piece.BLACK)
             view.addShapeAtCell(row, col, Shape.CIRCLE, Color.BLACK);
@@ -71,120 +148,79 @@ public class HelloController implements BoardGameController, BoardActionOnHover 
             view.removeShapesAtCell(row, col);
     }
 
+    /**
+     * Highlights valid moves for the current player.
+     */
     private void highlightValidMoves() {
+        OthelloBoard board = currentMode.getLogic().getBoard();
         for (int row = 0; row < board.getSize(); row++) {
             for (int col = 0; col < board.getSize(); col++) {
-                view.setCellColor(row, col, logic.isValidMove(row, col, currentPlayer) ? Color.RED : Color.GREEN);
+                boolean isValid = currentMode.getLogic().isValidMove(row, col, currentPlayer);
+                view.setCellColor(row, col, isValid ? Color.RED : Color.GREEN);
             }
         }
     }
 
-    private void updateTurnIndicator() {
-        String playerColor = (currentPlayer == Piece.BLACK) ? "Noir" : "Blanc";
-        view.updateLabeledElement("TurnIndicator", "C'est au tour de : " + playerColor);
-    }
-
+    /**
+     * Updates the score indicator.
+     */
     private void updateScoreIndicator() {
+        OthelloBoard board = currentMode.getLogic().getBoard();
+        ScoreCalculator scoreCalculator = new ScoreCalculator(board);
         int blackScore = scoreCalculator.calculateScore(Piece.BLACK);
         int whiteScore = scoreCalculator.calculateScore(Piece.WHITE);
         view.updateLabeledElement("ScoreIndicator", "Score : Noir " + blackScore + " - Blanc " + whiteScore);
     }
 
+    /**
+     * Updates the turn indicator.
+     */
+    private void updateTurnIndicator() {
+        String playerColor = (currentPlayer == Piece.BLACK) ? "Noir" : "Blanc";
+        view.updateLabeledElement("TurnIndicator", "C'est au tour de : " + playerColor);
+    }
+
+    /**
+     * Updates the initial text label.
+     */
     private void updateInitialText(String text) {
         view.updateLabeledElement("Initial Text", text);
     }
 
-    @Override
-    public void boardActionOnClick(int row, int col) {
-        if (!logic.isValidMove(row, col, currentPlayer)) return;
-
-        stateManager.saveState(currentPlayer);
-        logic.playMove(row, col, currentPlayer);
-        switchPlayer();
-        refreshGameState();
-
-        if (isGameOver()) {
-            determineWinner();
-        } else if (playAgainstAI && currentPlayer == Piece.WHITE) {
-            delayAIMove();
-        }
+    /**
+     * Checks if the game is over.
+     */
+    public boolean isGameOver() {
+        return !currentMode.getLogic().canPlayerPlay(Piece.BLACK) &&
+                !currentMode.getLogic().canPlayerPlay(Piece.WHITE);
     }
 
-
-    private void switchPlayer() {
-        currentPlayer = (currentPlayer == Piece.BLACK) ? Piece.WHITE : Piece.BLACK;
-    }
-
-    private void delayAIMove() {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> playAIMove()));
-        timeline.play();
-    }
-
-    private void playAIMove() {
-        int[] move = aiLogic.getBestMove(currentPlayer);
-        if (move != null) {
-            logic.playMove(move[0], move[1], currentPlayer);
-            switchPlayer();
-            refreshGameState();
-
-            if (isGameOver()) {
-                determineWinner();
-            }
-        }
-    }
-
-
-    @Override
-    public void buttonActionOnClick(String buttonId) {
-        switch (buttonId) {
-            case "ButtonToggleTwoPlayers" -> startNewGame(false);
-            case "ButtonToggleModeIA" -> startNewGame(!playAgainstAI);
-            case "ButtonUndo" -> undoMove();
-            case "ButtonRedo" -> redoMove();
-        }
-    }
-
-    private void undoMove() {
-        GameState previousState = stateManager.undo(currentPlayer);
-        if (previousState != null) restoreGameState(previousState);
-    }
-
-    private void redoMove() {
-        GameState nextState = stateManager.redo(currentPlayer);
-        if (nextState != null) restoreGameState(nextState);
-    }
-
-    private void restoreGameState(GameState state) {
-        board.copyFrom(state.getBoardState());
-        currentPlayer = state.getCurrentPlayer();
-        logic.updateBoardState(board);
-        refreshGameState();
+    /**
+     * Determines the winner and updates the display.
+     */
+    public void determineWinner() {
+        String winner = ScoreCalculator.determineWinner();
+        updateInitialText(winner);
     }
 
     @Override
-    public boolean validateHover(int row, int col) {
-        return logic.isValidMove(row, col, currentPlayer);
+    public boolean validateHover(int row, int column) {
+        return currentMode.getLogic().isValidMove(row, column, currentPlayer);
     }
 
-    private boolean isGameOver() {
-        // The game is over if neither player can make a valid move.
-        return !logic.canPlayerPlay(Piece.BLACK) && !logic.canPlayerPlay(Piece.WHITE);
+    public GameMode getGameMode() {
+        return currentMode;
     }
 
-    private void determineWinner() {
-        int blackScore = scoreCalculator.calculateScore(Piece.BLACK);
-        int whiteScore = scoreCalculator.calculateScore(Piece.WHITE);
-
-        String winner;
-        if (blackScore > whiteScore) {
-            winner = "Noir gagne !";
-        } else if (whiteScore > blackScore) {
-            winner = "Blanc gagne !";
-        } else {
-            winner = "Égalité !";
-        }
-
-        view.updateLabeledElement("Initial Text", winner);
+    public Piece getCurrentPlayer() {
+        return currentPlayer;
     }
 
+    public OthelloLogic getLogic() {
+        return currentMode.getLogic();
+    }
+
+    public void saveGameState() {
+        gameStateManager.saveState(currentPlayer);
+    }
 }

@@ -13,7 +13,6 @@ import java.util.List;
 public class HelloApplication {
 
     public static void main(String[] args) {
-        // Étape 1 : Configuration du jeu
         BoardGameConfiguration boardGameConfiguration = new BoardGameConfiguration(
                 "Othello Game",
                 new BoardGameDimensions(8, 8),
@@ -28,10 +27,8 @@ public class HelloApplication {
                 )
         );
 
-        // Étape 2 : Création du contrôleur
         BoardGameController controller = new HelloController();
 
-        // Étape 3 : Lancement de l'application
         BoardGameApplicationLauncher launcher = JavaFXBoardGameApplicationLauncher.getInstance();
         launcher.launchApplication(boardGameConfiguration, controller);
     }
