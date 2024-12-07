@@ -6,7 +6,7 @@ import fr.univ_amu.m1info.board_game_library.model.*;
 
 import java.util.List;
 
-public class HelloController implements BoardGameController, BoardActionOnHover {
+public class OthelloController implements BoardGameController, BoardActionOnHover {
     private GameMode currentMode;
     private GameStateManager gameStateManager;
     private BoardGameView view;

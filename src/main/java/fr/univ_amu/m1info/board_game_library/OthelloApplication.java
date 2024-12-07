@@ -10,7 +10,7 @@ import fr.univ_amu.m1info.board_game_library.graphics.configuration.LabeledEleme
 
 import java.util.List;
 
-public class HelloApplication {
+public class OthelloApplication {
 
     public static void main(String[] args) {
         BoardGameConfiguration boardGameConfiguration = new BoardGameConfiguration(
@@ -27,7 +27,7 @@ public class HelloApplication {
                 )
         );
 
-        BoardGameController controller = new HelloController();
+        BoardGameController controller = new OthelloController();
 
         BoardGameApplicationLauncher launcher = JavaFXBoardGameApplicationLauncher.getInstance();
         launcher.launchApplication(boardGameConfiguration, controller);
