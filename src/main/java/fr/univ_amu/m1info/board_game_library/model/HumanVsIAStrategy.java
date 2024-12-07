@@ -1,11 +1,11 @@
 package fr.univ_amu.m1info.board_game_library.model;
 
-import fr.univ_amu.m1info.board_game_library.HelloController;
+import fr.univ_amu.m1info.board_game_library.OthelloController;
 
 public class HumanVsIAStrategy implements GameModeStrategy {
 
     @Override
-    public void handleMove(Position position, Piece currentPlayer, HelloController controller) {
+    public void handleMove(Position position, Piece currentPlayer, OthelloController controller) {
         if (currentPlayer == Piece.BLACK) {
             // Coup du joueur humain
             if (!controller.getLogic().isValidMove(position.getRow(), position.getCol(), currentPlayer)) {
