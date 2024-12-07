@@ -16,67 +16,72 @@ public class OthelloController implements BoardGameController, BoardActionOnHove
     @Override
     public void initializeViewOnStart(BoardGameView view) {
         this.view = view;
-        startNewGame(false); // Start with default mode (Human vs Human)
+        startNewGame(GameModeType.HUMAN_VS_HUMAN); // Mode par défaut
     }
 
     /**
-     * Initializes a new game with the specified mode (Human vs Human or Human vs AI).
+     * Initialise une nouvelle partie avec un type de jeu spécifique.
      */
-    public void startNewGame(boolean againstAI) {
+    public void startNewGame(GameModeType modeType) {
         OthelloBoard board = new OthelloBoard();
         OthelloLogic logic = new OthelloLogic(board);
 
-        if (againstAI) {
-            currentMode = new HumanVsAIMode(logic);
-            setGameModeStrategy(new HumanVsIAStrategy()); // Définit la stratégie IA
-        } else {
-            currentMode = new HumanVsHumanMode(logic);
-            setGameModeStrategy(new HumanVsHumanStrategy()); // Définit la stratégie Humain vs Humain
+        // Configuration du mode de jeu et de la stratégie
+        switch (modeType) {
+            case HUMAN_VS_HUMAN -> {
+                currentMode = new HumanVsHumanMode(logic);
+                gameModeStrategy = new HumanVsHumanStrategy();
+            }
+            case HUMAN_VS_RANDOM_AI -> {
+                currentMode = new HumanVsAIMode(logic);
+                gameModeStrategy = new HumanVsAIStrategy();
+            }
+            case HUMAN_VS_MINIMAX_AI -> {
+                currentMode = new HumanVsMinimaxAIMode(logic);
+                gameModeStrategy = new HumanVsMinimaxAIStrategy();
+            }
+            default -> throw new IllegalArgumentException("Mode de jeu inconnu !");
         }
 
         gameStateManager = new GameStateManager(board);
         currentPlayer = Piece.BLACK;
         refreshGameState();
-        updateInitialText(againstAI ? "Mode : Humain vs IA activé" : "Mode : Humain vs Humain activé");
+
+        // Mise à jour du texte initial
+        updateInitialText(switch (modeType) {
+            case HUMAN_VS_HUMAN -> "Mode : Humain vs Humain activé";
+            case HUMAN_VS_RANDOM_AI -> "Mode : Humain vs IA (Facile) activé";
+            case HUMAN_VS_MINIMAX_AI -> "Mode : Humain vs IA (Difficile) activé";
+        });
     }
 
-    public void setGameModeStrategy(GameModeStrategy gameModeStrategy) {
-        this.gameModeStrategy = gameModeStrategy;
-    }
-
-    /**
-     * Handles board cell clicks by the user.
-     */
     @Override
     public void boardActionOnClick(int row, int col) {
         if (gameModeStrategy == null) {
-            throw new IllegalStateException("GameModeStrategy is not set.");
+            System.err.println("Erreur : Aucune stratégie de jeu définie !");
+            return;
         }
 
-        // Convert row and col into a Position object
+        // Convertit les coordonnées en objet Position et délègue à la stratégie
         Position position = new Position(row, col);
-
-        // Delegate the move to the strategy
         gameModeStrategy.handleMove(position, currentPlayer, this);
     }
 
-    /**
-     * Handles button clicks for various actions like toggling game mode, undo, and redo.
-     */
     @Override
     public void buttonActionOnClick(String buttonId) {
         switch (buttonId) {
-            case "ButtonToggleTwoPlayers" -> toggleGameMode(false);
-            case "ButtonToggleModeIA" -> toggleGameMode(true);
+            case "ButtonToggleTwoPlayers" -> toggleGameMode(GameModeType.HUMAN_VS_HUMAN);
+            case "ButtonToggleModeIA" -> toggleGameMode(GameModeType.HUMAN_VS_RANDOM_AI); // Correspond à "IA Facile"
+            case "ButtonToggleModeMinimax" -> toggleGameMode(GameModeType.HUMAN_VS_MINIMAX_AI); // Correspond à "IA Difficile"
             case "ButtonUndo" -> undoMove();
             case "ButtonRedo" -> redoMove();
-            default -> System.out.println("Unknown button action: " + buttonId);
+            default -> System.out.println("Action inconnue : " + buttonId);
         }
     }
 
-    private void toggleGameMode(boolean againstAI) {
-        startNewGame(againstAI);
-        updateInitialText(againstAI ? "Mode : Humain vs IA activé" : "Mode : Humain vs Humain activé");
+
+    private void toggleGameMode(GameModeType modeType) {
+        startNewGame(modeType);
     }
 
     private void undoMove() {
@@ -135,15 +140,16 @@ public class OthelloController implements BoardGameController, BoardActionOnHove
     private void highlightValidMoves() {
         List<Position> validMoves = currentMode.getLogic().getValidMoves(currentPlayer);
 
-        OthelloBoard board = currentMode.getLogic().getBoard();
-        for (int row = 0; row < board.getSize(); row++) {
-            for (int col = 0; col < board.getSize(); col++) {
-                view.setCellColor(row, col, Color.GREEN); // Default color
+        // Réinitialisation des couleurs
+        for (int row = 0; row < currentMode.getLogic().getBoard().getSize(); row++) {
+            for (int col = 0; col < currentMode.getLogic().getBoard().getSize(); col++) {
+                view.setCellColor(row, col, Color.GREEN);
             }
         }
 
+        // Mise en évidence des coups valides
         for (Position move : validMoves) {
-            view.setCellColor(move.getRow(), move.getCol(), Color.RED); // Highlight valid moves
+            view.setCellColor(move.getRow(), move.getCol(), Color.RED);
         }
     }
 
