@@ -36,23 +36,29 @@ public class OthelloBoard {
         return size;
     }
 
+    @Override
     public OthelloBoard clone() {
         OthelloBoard clonedBoard = new OthelloBoard();
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                clonedBoard.board[row][col] = this.board[row][col]; // copy every case
+                clonedBoard.board[row][col] = this.board[row][col];
             }
         }
         return clonedBoard;
     }
 
-    public void copyFrom(OthelloBoard otherBoard) {
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                this.board[row][col] = otherBoard.board[row][col]; // Cases update
+
+    public void copyFrom(OthelloBoard other) {
+        System.out.println("Restoring board state...");
+        for (int row = 0; row < getSize(); row++) {
+            for (int col = 0; col < getSize(); col++) {
+                this.board[row][col] = other.getPieceAt(row, col);
+                System.out.printf("Cell (%d,%d) restored to %s%n", row, col, this.board[row][col]);
             }
         }
     }
+
+
 
     public boolean isValidPosition(int row, int col) {
         return row >= 0 && row < size && col >= 0 && col < size;

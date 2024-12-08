@@ -18,7 +18,8 @@ public class OthelloApplication {
                 new BoardGameDimensions(8, 8),
                 List.of(
                         new LabeledElementConfiguration("1 VS 1", "ButtonToggleTwoPlayers", LabeledElementKind.BUTTON),
-                        new LabeledElementConfiguration("IA", "ButtonToggleModeIA", LabeledElementKind.BUTTON),
+                        new LabeledElementConfiguration("IA Facile", "ButtonToggleModeIA", LabeledElementKind.BUTTON),
+                        new LabeledElementConfiguration("IA Difficile", "ButtonToggleModeMinimax", LabeledElementKind.BUTTON),
                         new LabeledElementConfiguration("Initial Text", "Initial Text", LabeledElementKind.TEXT),
                         new LabeledElementConfiguration("C'est au tour de : Noir", "TurnIndicator", LabeledElementKind.TEXT),
                         new LabeledElementConfiguration("Score : Noir 2 - Blanc 2", "ScoreIndicator", LabeledElementKind.TEXT),
@@ -32,4 +33,5 @@ public class OthelloApplication {
         BoardGameApplicationLauncher launcher = JavaFXBoardGameApplicationLauncher.getInstance();
         launcher.launchApplication(boardGameConfiguration, controller);
     }
+
 }

@@ -1,5 +1,8 @@
 package fr.univ_amu.m1info.board_game_library.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PieceFlipper {
 
     // Directions statiques communes pour les déplacements dans le plateau
@@ -13,6 +16,27 @@ public class PieceFlipper {
             flipInDirection(board, row, col, dir[0], dir[1], currentPlayer);
         }
     }
+
+    public List<Position> findFlippablePieces(OthelloBoard board, int row, int col, Piece currentPlayer, int rowDir, int colDir) {
+        List<Position> flippable = new ArrayList<>();
+        Piece opponent = (currentPlayer == Piece.BLACK) ? Piece.WHITE : Piece.BLACK;
+        int r = row + rowDir, c = col + colDir;
+
+        while (board.isValidPosition(r, c)) {
+            Piece piece = board.getPieceAt(r, c);
+            if (piece == opponent) {
+                flippable.add(new Position(r, c));
+            } else if (piece == currentPlayer) {
+                return flippable; // Retourne les positions collectées
+            } else {
+                break; // Vide ou bord atteint
+            }
+            r += rowDir;
+            c += colDir;
+        }
+        return new ArrayList<>(); // Aucun retournement valide
+    }
+
 
     private void flipInDirection(OthelloBoard board, int row, int col, int rowDir, int colDir, Piece currentPlayer) {
         Piece opponent = (currentPlayer == Piece.BLACK) ? Piece.WHITE : Piece.BLACK;
