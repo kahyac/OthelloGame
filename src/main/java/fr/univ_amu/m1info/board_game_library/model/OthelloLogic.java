@@ -12,46 +12,22 @@ public class OthelloLogic {
         this.flipper = new PieceFlipper();
     }
 
-    // Vérifie si un coup est valide
     public boolean isValidMove(int row, int col, Piece player) {
         if (!board.isValidPosition(row, col) || board.getPieceAt(row, col) != Piece.EMPTY) {
-            return false; // Case non valide ou occupée
+            return false;
         }
-        return hasFlippablePieces(row, col, player); // Vérifie s'il y a des pièces à retourner
+        return hasFlippablePieces(row, col, player);
     }
 
-    // Détermine s'il y a des pièces à retourner dans au moins une direction
     private boolean hasFlippablePieces(int row, int col, Piece player) {
         for (int[] direction : PieceFlipper.DIRECTIONS) {
-            if (!findFlippablePieces(row, col, player, direction[0], direction[1]).isEmpty()) {
+            if (!flipper.findFlippablePieces(board, row, col, player, direction[0], direction[1]).isEmpty()) {
                 return true;
             }
         }
         return false;
     }
 
-    // Trouve toutes les pièces à retourner dans une direction donnée
-    public List<Position> findFlippablePieces(int row, int col, Piece player, int dRow, int dCol) {
-        List<Position> flippable = new ArrayList<>();
-        int currentRow = row + dRow;
-        int currentCol = col + dCol;
-        Piece opponent = player.opponent();
-
-        while (board.isValidPosition(currentRow, currentCol) && board.getPieceAt(currentRow, currentCol) == opponent) {
-            flippable.add(new Position(currentRow, currentCol));
-            currentRow += dRow;
-            currentCol += dCol;
-        }
-
-        // Vérifie si cette direction se termine sur une pièce du joueur actuel
-        if (board.isValidPosition(currentRow, currentCol) && board.getPieceAt(currentRow, currentCol) == player) {
-            return flippable;
-        }
-
-        return new ArrayList<>(); // Aucune pièce à retourner dans cette direction
-    }
-
-    // Retourne toutes les positions valides pour un joueur
     public List<Position> getValidMoves(Piece player) {
         List<Position> validMoves = new ArrayList<>();
         for (int row = 0; row < board.getSize(); row++) {
@@ -64,27 +40,18 @@ public class OthelloLogic {
         return validMoves;
     }
 
-    // Effectue le retournement des pièces
     public void flipPieces(int row, int col, Piece currentPlayer) {
-        for (int[] direction : PieceFlipper.DIRECTIONS) {
-            List<Position> flippable = findFlippablePieces(row, col, currentPlayer, direction[0], direction[1]);
-            for (Position position : flippable) {
-                board.placePiece(position.getRow(), position.getCol(), currentPlayer);
-            }
-        }
+        flipper.flipPieces(board, row, col, currentPlayer);
     }
 
-    // Retourne si un joueur peut encore jouer
     public boolean canPlayerPlay(Piece player) {
         return !getValidMoves(player).isEmpty();
     }
 
-    // Met à jour l'état actuel du plateau
     public void updateBoardState(OthelloBoard newBoardState) {
         board.copyFrom(newBoardState);
     }
 
-    // Calcule le meilleur coup en utilisant Minimax
     public Position getBestMoveUsingMinimax(Piece player, int depth) {
         int bestScore = Integer.MIN_VALUE;
         Position bestMove = null;
@@ -92,7 +59,6 @@ public class OthelloLogic {
         List<Position> validMoves = getValidMoves(player);
 
         for (Position move : validMoves) {
-            // Crée une copie du plateau pour simuler le coup
             OthelloBoard boardCopy = board.clone();
             OthelloLogic logicCopy = new OthelloLogic(boardCopy);
             logicCopy.flipPieces(move.getRow(), move.getCol(), player);
@@ -108,7 +74,7 @@ public class OthelloLogic {
         return bestMove;
     }
 
-    // Implémente l'algorithme Minimax
+    // Implementes Minimax Algorithm
     private int minimax(OthelloLogic logic, int depth, boolean isMaximizing, Piece currentPlayer) {
         if (depth == 0 || !logic.canPlayerPlay(Piece.BLACK) && !logic.canPlayerPlay(Piece.WHITE)) {
             return evaluateBoard(logic.getBoard(), currentPlayer);

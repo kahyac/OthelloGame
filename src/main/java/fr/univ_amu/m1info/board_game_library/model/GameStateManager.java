@@ -12,31 +12,35 @@ public class GameStateManager {
     }
 
     public void saveState(Piece currentPlayer) {
-        // Saves the current state in the undo stack
         undoStack.push(new GameState(board.clone(), currentPlayer));
-        // Empties the recovery stack because a new state has been added
-        redoStack.clear();
+        redoStack.clear(); // Vide la pile redo après une nouvelle action
     }
 
+
     public GameState undo(Piece currentPlayer) {
-        if (undoStack.isEmpty()) {
-            System.out.println("Undo: No states to undo.");
-            return null;
-        }
-        // Save current state before cancelling
-        redoStack.push(new GameState(board.clone(), currentPlayer));
-        // Restores previous state
-        return undoStack.pop();
+        if (undoStack.isEmpty()) return null;
+
+        redoStack.push(new GameState(board.clone(), currentPlayer)); // Sauvegarde l'état actuel
+        GameState previousState = undoStack.pop(); // Récupère l'état précédent
+        board.copyFrom(previousState.boardState()); // Applique l'état précédent
+        return previousState;
     }
+
+
+
 
     public GameState redo(Piece currentPlayer) {
         if (redoStack.isEmpty()) {
             System.out.println("Redo: No states to redo.");
             return null;
         }
-        // Save current state before restoring
+        // Sauvegarde l'état actuel dans undo avant de restaurer
         undoStack.push(new GameState(board.clone(), currentPlayer));
-        // Restores next state
-        return redoStack.pop();
+
+        // Restaure l'état suivant
+        GameState nextState = redoStack.pop();
+        board.copyFrom(nextState.boardState()); // Applique l'état restauré au plateau
+        return nextState;
     }
+
 }
